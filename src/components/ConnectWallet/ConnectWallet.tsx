@@ -28,8 +28,14 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
     web3.eth
       .requestAccounts()
       .then(async (accounts: string[]) => {
-        console.log(accounts, web3, await web3.eth.net.getId());
-        dispatch(setWalletAddress(accounts[0]));
+        // TODO put in thunk
+        const balance = web3.utils.fromWei(
+          await web3.eth.getBalance(accounts[0])
+        );
+        const networkId = await web3.eth.net.getId();
+        dispatch(
+          setWalletAddress({ address: accounts[0], balance, networkId })
+        );
       })
       .catch((error: any) => {
         alert(`Something went wrong: ${error}`);

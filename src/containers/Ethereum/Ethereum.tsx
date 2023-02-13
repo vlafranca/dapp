@@ -11,7 +11,7 @@ const Ethereum: FC<EthereumProps> = () => {
 
   useEffect(() => {
     if (!wallet.walletAddress) return;
-
+    // TODO put error boundary when no api key double request
     fetch(
       `http://api.etherscan.io/api?module=account&action=txlist&address=${wallet.walletAddress}&startblock=0&endblock=99999999&sort=asc&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`
     )

@@ -1,15 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
 interface WalletState {
   isMetamaskInstalled: boolean;
   walletAddress: string | null;
+  balance: string;
+  networkId: number;
 }
 
 // Define the initial state using that type
 const initialState: WalletState = {
   isMetamaskInstalled: false,
   walletAddress: null,
+  balance: "0",
+  networkId: 1,
 };
 
 export const walletSlice = createSlice({
@@ -22,11 +26,26 @@ export const walletSlice = createSlice({
     unsetMetamasInstalled: (state) => {
       state.isMetamaskInstalled = false;
     },
-    setWalletAddress: (state, action) => {
-      state.walletAddress = action.payload;
+    setWalletAddress: (
+      state,
+      action: PayloadAction<{
+        address: string;
+        balance: string;
+        networkId: number;
+      }>
+    ) => {
+      state.walletAddress = action.payload.address;
+      state.balance = action.payload.balance;
+      state.networkId = action.payload.networkId;
     },
     unsetWalletAddress: (state) => {
       state.walletAddress = null;
+    },
+    updateNetwork: (state, action: PayloadAction<number>) => {
+      state.networkId = action.payload;
+    },
+    updateBalance: (state, action: PayloadAction<string>) => {
+      state.balance = action.payload;
     },
   },
 });
@@ -37,6 +56,8 @@ export const {
   unsetMetamasInstalled,
   setWalletAddress,
   unsetWalletAddress,
+  updateNetwork,
+  updateBalance,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;
