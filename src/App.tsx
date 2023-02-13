@@ -1,26 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Container, Nav, Navbar } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
+import { Outlet } from "react-router-dom";
+import "./App.scss";
+import ConnectWallet from "./components/ConnectWallet/ConnectWallet";
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="App">
+        <header>
+          <Navbar bg="light" expand="lg">
+            <Container>
+              <Navbar.Brand href="#home">ZDAPP</Navbar.Brand>
+              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="me-auto">
+                  <LinkContainer to="/ethereum">
+                    <Nav.Link href="#home">Ethereum</Nav.Link>
+                  </LinkContainer>
+                  <LinkContainer to="/tokens">
+                    <Nav.Link href="#link">Tokens</Nav.Link>
+                  </LinkContainer>
+                  <LinkContainer to="/nft">
+                    <Nav.Link href="#link">NFT</Nav.Link>
+                  </LinkContainer>
+                </Nav>
+              </Navbar.Collapse>
+              <Navbar.Brand className="justify-content-end">
+                <ConnectWallet />
+              </Navbar.Brand>
+            </Container>
+          </Navbar>
+        </header>
+        <Outlet />
+      </div>
+    </>
   );
-}
+};
 
 export default App;
