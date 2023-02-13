@@ -18,6 +18,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
+      {/* <Web3Provider value> */}
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>
@@ -29,6 +30,7 @@ root.render(
           </Route>
         </Routes>
       </BrowserRouter>
+      {/* </Web3Provider> */}
     </Provider>
   </React.StrictMode>
 );

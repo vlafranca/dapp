@@ -1,5 +1,5 @@
 import detectEthereumProvider from "@metamask/detect-provider";
-import { FC, useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -7,12 +7,14 @@ import {
   setWalletAddress,
   unsetWalletAddress,
 } from "../../store/walletSlice";
+import Web3Context from "../../Web3Context";
 
 interface ConnectWalletProps {}
 
 const ConnectWallet: FC<ConnectWalletProps> = () => {
   const wallet = useAppSelector((state) => state.wallet);
   const dispatch = useAppDispatch();
+  const web3 = useContext(Web3Context);
 
   useEffect(() => {
     const detectMetamask = async () => {
@@ -22,13 +24,11 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
     detectMetamask();
   }, []);
 
-  async function connectWallet(): Promise<void> {
-    //to get around type checking
-    (window as any).ethereum
-      .request({
-        method: "eth_requestAccounts",
-      })
-      .then((accounts: string[]) => {
+  function connectWallet(): void {
+    web3.eth
+      .requestAccounts()
+      .then(async (accounts: string[]) => {
+        console.log(accounts, web3, await web3.eth.net.getId());
         dispatch(setWalletAddress(accounts[0]));
       })
       .catch((error: any) => {
