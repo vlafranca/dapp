@@ -19,7 +19,7 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
     );
   }
 
-  return <Container>{children}</Container>;
+  return <Container className="mt-2">{children}</Container>;
 };
 
 export default ConnectWalletGuard;

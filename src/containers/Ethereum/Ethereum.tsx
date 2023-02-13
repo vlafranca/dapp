@@ -1,12 +1,41 @@
-import { FC } from "react";
-import ConnectWalletGuard from "../../components/ConnectWalletGuard/ConnectWalletGuard";
+import { FC, useEffect, useState } from "react";
+import { Card } from "react-bootstrap";
+import Web3 from "web3";
+import { useAppSelector } from "../../store/hooks";
 
 interface EthereumProps {}
 
-const Ethereum: FC<EthereumProps> = () => (
-  <ConnectWalletGuard>
-    <div>Ethereum page</div>
-  </ConnectWalletGuard>
-);
+const Ethereum: FC<EthereumProps> = () => {
+  const wallet = useAppSelector((state) => state.wallet);
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    if (!wallet.walletAddress) return;
+
+    fetch(
+      `http://api.etherscan.io/api?module=account&action=txlist&address=${wallet.walletAddress}&startblock=0&endblock=99999999&sort=asc&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`
+    )
+      .then((data) => data.json())
+      .then((data) => {
+        setTransactions(data.result);
+      });
+  }, [wallet.walletAddress]);
+
+  if (!transactions.length) {
+    return <div>Spinner</div>;
+  }
+
+  return (
+    <>
+      {transactions.map((transaction: any) => {
+        return (
+          <Card className="mb-2">
+            <Card.Body>{Web3.utils.fromWei(transaction.value)}</Card.Body>
+          </Card>
+        );
+      })}
+    </>
+  );
+};
 
 export default Ethereum;

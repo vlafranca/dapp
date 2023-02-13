@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux/es/exports";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import App from "./App";
+import ConnectWalletGuard from "./components/ConnectWalletGuard/ConnectWalletGuard";
 import Ethereum from "./containers/Ethereum/Ethereum";
 import NFT from "./containers/NFT/NFT";
 import NotFound from "./containers/NotFound/NotFound";
@@ -23,9 +24,30 @@ root.render(
         <Routes>
           <Route path="/" element={<App />}>
             <Route index element={<Navigate to="/ethereum" />} />
-            <Route path="ethereum" element={<Ethereum />} />
-            <Route path="tokens" element={<Tokens />} />
-            <Route path="nft" element={<NFT />} />
+            <Route
+              path="ethereum"
+              element={
+                <ConnectWalletGuard>
+                  <Ethereum />
+                </ConnectWalletGuard>
+              }
+            />
+            <Route
+              path="tokens"
+              element={
+                <ConnectWalletGuard>
+                  <Tokens />
+                </ConnectWalletGuard>
+              }
+            />
+            <Route
+              path="nft"
+              element={
+                <ConnectWalletGuard>
+                  <NFT />
+                </ConnectWalletGuard>
+              }
+            />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
