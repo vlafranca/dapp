@@ -1,6 +1,6 @@
 import detectEthereumProvider from "@metamask/detect-provider";
 import { FC, useContext, useEffect } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   setMetamasInstalled,
@@ -53,7 +53,12 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
   return !wallet.walletAddress ? (
     <Button onClick={connectWallet}>Connect Wallet</Button>
   ) : (
-    <Button onClick={disconnectWallet}>{wallet.walletAddress}</Button>
+    <DropdownButton
+      align="end"
+      id="dropdown-basic-button"
+      title={wallet.walletAddress}>
+      <Dropdown.Item onClick={disconnectWallet}>Disconnect</Dropdown.Item>
+    </DropdownButton>
   );
 };
 
