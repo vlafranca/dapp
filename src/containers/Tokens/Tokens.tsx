@@ -1,12 +1,12 @@
-import React, { FC } from 'react';
-
+import { FC } from "react";
+import ConnectWalletGuard from "../../components/ConnectWalletGuard/ConnectWalletGuard";
 
 interface TokensProps {}
 
 const Tokens: FC<TokensProps> = () => (
-  <div>
-    Tokens Component
-  </div>
+  <ConnectWalletGuard>
+    <div>Tokens Component</div>
+  </ConnectWalletGuard>
 );
 
 export default Tokens;

@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux/es/exports";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import App from "./App";
 import Ethereum from "./containers/Ethereum/Ethereum";
@@ -9,23 +10,26 @@ import NotFound from "./containers/NotFound/NotFound";
 import Tokens from "./containers/Tokens/Tokens";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
+import { store } from "./store/store";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route index element={<Navigate to="/ethereum" />} />
-          <Route path="ethereum" element={<Ethereum />} />
-          <Route path="tokens" element={<Tokens />} />
-          <Route path="nft" element={<NFT />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route index element={<Navigate to="/ethereum" />} />
+            <Route path="ethereum" element={<Ethereum />} />
+            <Route path="tokens" element={<Tokens />} />
+            <Route path="nft" element={<NFT />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>
 );
 

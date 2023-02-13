@@ -1,12 +1,12 @@
-import React, { FC } from 'react';
-
+import { FC } from "react";
+import ConnectWalletGuard from "../../components/ConnectWalletGuard/ConnectWalletGuard";
 
 interface EthereumProps {}
 
 const Ethereum: FC<EthereumProps> = () => (
-  <div>
-    Ethereum Component
-  </div>
+  <ConnectWalletGuard>
+    <div>Ethereum page</div>
+  </ConnectWalletGuard>
 );
 
 export default Ethereum;
