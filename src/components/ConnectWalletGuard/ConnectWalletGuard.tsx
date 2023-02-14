@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef } from "react";
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { ErrorBoundary } from "../../errors/ErrorBoundary";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -53,17 +53,26 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
     return (
       <Container className="d-flex h-100 justify-content-center align-items-center flex-column">
         <ConnectWallet />
+        <Row className="mt-4 mb-4">
+          <Col className="text-center">OR</Col>
+        </Row>
         <Container>
-          <Form.Label htmlFor="address">Search address</Form.Label>
-          <Form.Control
-            type="text"
-            id="address"
-            aria-describedby="wallet_address"
-            ref={inputRef}
-          />
-          <Button variant="primary" type="submit" onClick={searchAddress}>
-            Submit
-          </Button>
+          <Row>
+            <Col className="mb-2">
+              <Form.Control
+                type="text"
+                id="address"
+                aria-describedby="wallet_address"
+                placeholder="Enter ERC-20 wallet address"
+                ref={inputRef}
+              />
+            </Col>
+            <Col className="mb-2 text-center" xs="12" sm="auto">
+              <Button variant="primary" type="submit" onClick={searchAddress}>
+                Search
+              </Button>
+            </Col>
+          </Row>
         </Container>
       </Container>
     );
