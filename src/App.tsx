@@ -83,8 +83,9 @@ const App: React.FC = () => {
                       title={EthNetworkNameMapping[wallet.networkId]}
                       defaultValue={EthNetworks.Goerli}
                       onSelect={changeNetwork}>
-                      {Networks.map((network) => (
+                      {Networks.map((network, i) => (
                         <Dropdown.Item
+                          key={i}
                           active={wallet.networkId === network}
                           eventKey={network}>
                           {EthNetworkNameMapping[network]}

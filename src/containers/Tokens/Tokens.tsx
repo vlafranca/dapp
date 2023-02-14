@@ -35,8 +35,8 @@ const Tokens: FC<TokensProps> = () => {
 
   return (
     <>
-      {tokens.map((token) => (
-        <TokenDetail token={token} />
+      {tokens.map((token, i) => (
+        <TokenDetail key={i} token={token} />
       ))}
     </>
   );

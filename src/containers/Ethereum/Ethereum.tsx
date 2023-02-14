@@ -27,9 +27,9 @@ const Ethereum: FC<EthereumProps> = () => {
 
   return (
     <>
-      {transactions.map((transaction: any) => {
+      {transactions.map((transaction: any, i: number) => {
         return (
-          <Card className="mb-2">
+          <Card className="mb-2" key={i}>
             <Card.Body>{Web3.utils.fromWei(transaction.value)}</Card.Body>
           </Card>
         );
