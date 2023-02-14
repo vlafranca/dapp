@@ -1,5 +1,4 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux/es/exports";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
@@ -17,44 +16,44 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      {/* <Web3Provider value> */}
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<App />}>
-            <Route index element={<Navigate to="/ethereum" />} />
-            <Route
-              path="ethereum"
-              element={
-                <ConnectWalletGuard>
-                  <Ethereum />
-                </ConnectWalletGuard>
-              }
-            />
-            <Route
-              path="tokens"
-              element={
-                <ConnectWalletGuard>
-                  <Tokens />
-                </ConnectWalletGuard>
-              }
-            />
-            <Route
-              path="nft"
-              element={
-                <ConnectWalletGuard>
-                  <NFT />
-                </ConnectWalletGuard>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-      {/* </Web3Provider> */}
-    </Provider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <Provider store={store}>
+    {/* <Web3Provider value> */}
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />}>
+          <Route index element={<Navigate to="/ethereum" />} />
+          <Route
+            path="ethereum"
+            element={
+              <ConnectWalletGuard>
+                <Ethereum />
+              </ConnectWalletGuard>
+            }
+          />
+          <Route
+            path="tokens"
+            element={
+              <ConnectWalletGuard>
+                <Tokens />
+              </ConnectWalletGuard>
+            }
+          />
+          <Route
+            path="nft"
+            element={
+              <ConnectWalletGuard>
+                <NFT />
+              </ConnectWalletGuard>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+    {/* </Web3Provider> */}
+  </Provider>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

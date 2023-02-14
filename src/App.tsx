@@ -71,7 +71,7 @@ const App: React.FC = () => {
             <Row direction="horizontal" className="justify-content-end" gap={3}>
               {wallet.walletAddress && (
                 <>
-                  <Col>
+                  <Col className="d-flex">
                     <Navbar.Text>
                       {Math.round(Number(wallet.balance) * 1000000) / 1000000}{" "}
                       eth
@@ -95,9 +95,7 @@ const App: React.FC = () => {
                 </>
               )}
               <Col>
-                <Navbar.Brand>
-                  <ConnectWallet />
-                </Navbar.Brand>
+                <ConnectWallet />
               </Col>
             </Row>
           </Container>
