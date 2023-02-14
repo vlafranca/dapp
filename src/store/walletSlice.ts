@@ -6,6 +6,9 @@ export interface WalletState {
   walletAddress: string | null;
   balance: string;
   networkId: number;
+  ethereum: {
+    transactions?: any[];
+  } | null;
 }
 
 // Define the initial state using that type
@@ -14,6 +17,7 @@ const initialState: WalletState = {
   walletAddress: null,
   balance: "0",
   networkId: 1,
+  ethereum: null,
 };
 
 export const walletSlice = createSlice({
@@ -47,6 +51,10 @@ export const walletSlice = createSlice({
     updateBalance: (state, action: PayloadAction<string>) => {
       state.balance = action.payload;
     },
+    setTransactions: (state, action: PayloadAction<any[]>) => {
+      if (!state.ethereum) state.ethereum = {};
+      state.ethereum.transactions = action.payload;
+    },
   },
 });
 
@@ -58,6 +66,7 @@ export const {
   unsetWalletAddress,
   updateNetwork,
   updateBalance,
+  setTransactions,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

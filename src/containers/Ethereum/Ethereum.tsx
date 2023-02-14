@@ -1,28 +1,22 @@
 import { FC, useEffect, useState } from "react";
 import { Badge, Card, Col, Row } from "react-bootstrap";
 import Web3 from "web3";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { fetchEthTransactions } from "../../store/store";
 import { WalletState } from "../../store/walletSlice";
 
 interface EthereumProps {}
 
 const Ethereum: FC<EthereumProps> = () => {
   const wallet = useAppSelector((state) => state.wallet);
-  const [transactions, setTransactions] = useState([]);
+  // const [transactions, setTransactions] = useState([]);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (!wallet.walletAddress) return;
-    // TODO put error boundary when no api key double request
-    fetch(
-      `http://api.etherscan.io/api?module=account&action=txlist&address=${wallet.walletAddress}&startblock=0&endblock=99999999&sort=asc&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`
-    )
-      .then((data) => data.json())
-      .then((data) => {
-        setTransactions(data.result);
-      });
-  }, [wallet.walletAddress]);
+    dispatch(fetchEthTransactions());
+  }, []);
 
-  if (!transactions.length) {
+  if (!wallet?.ethereum?.transactions?.length) {
     return <div>Spinner</div>;
   }
 
@@ -36,7 +30,7 @@ const Ethereum: FC<EthereumProps> = () => {
           ({Math.round(Number(wallet.balance) * 1000000) / 1000000} eth)
         </Col>
       </Row>
-      {transactions.map((transaction: any, i: number) => {
+      {wallet?.ethereum?.transactions?.map((transaction: any, i: number) => {
         return (
           <TransactionCard
             index={i}
@@ -87,7 +81,8 @@ const TransactionCard: FC<{
           </Col>
           <Col
             md={3}
-            className="ms-auto d-flex justify-content-end align-items-center text-end">
+            className="ms-auto d-flex justify-content-end align-items-center text-end"
+          >
             <div>
               <p className="mb-0">{amount} ETH</p>
               {price && "$" + (price * Number(amount)).toPrecision(4)}
