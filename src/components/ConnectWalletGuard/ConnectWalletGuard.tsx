@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
+import { ErrorBoundary } from "../../errors/ErrorBoundary";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setMetamasInstalled, setWalletAddress } from "../../store/walletSlice";
 import ConnectWallet from "../ConnectWallet/ConnectWallet";
@@ -68,7 +69,11 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
     );
   }
 
-  return <Container className="mt-2">{children}</Container>;
+  return (
+    <ErrorBoundary>
+      <Container className="mt-2">{children}</Container>
+    </ErrorBoundary>
+  );
 };
 
 export default ConnectWalletGuard;
