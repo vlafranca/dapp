@@ -18,7 +18,7 @@ const Ethereum: FC<EthereumProps> = () => {
     dispatch(fetchEthTransactions());
   }, []);
 
-  if (!wallet?.ethereum?.transactions?.length) {
+  if (wallet?.ethereum?.loading) {
     return <div>Spinner</div>;
   }
 

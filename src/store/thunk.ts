@@ -1,5 +1,6 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Alchemy, Network, TokenBalanceSuccess } from "alchemy-sdk";
-import { RootState } from "./store";
+import { AppDispatch, RootState } from "./store";
 import { setToken, setTransactions } from "./walletSlice";
 
 const config = {
@@ -8,40 +9,60 @@ const config = {
 };
 const alchemy = new Alchemy(config);
 
-export const fetchEthTransactions =
-  () => async (dispatch: any, getState: () => RootState) => {
-    fetch(
-      `http://api.etherscan.io/api?module=account&action=txlist&address=${
-        getState().wallet.walletAddress
-      }&startblock=0&endblock=99999999&sort=asc&page=1&offset=10&apikey=${
-        process.env.REACT_APP_ETHERSCAN_API_KEY
-      }`
-    )
-      .then((data) => data.json())
-      .then((data) => {
-        dispatch(setTransactions(data.result));
+export const fetchEthTransactions = createAsyncThunk<
+  void,
+  undefined,
+  {
+    // Optional fields for defining thunkApi field types
+    dispatch: AppDispatch;
+    state: RootState;
+  }
+>("fetchEtherscanTransactions", async (_, thunkApi) => {
+  fetch(
+    `http://api.etherscan.io/api?module=account&action=txlist&address=${
+      thunkApi.getState().wallet.walletAddress
+    }&startblock=0&endblock=99999999&sort=asc&page=1&offset=10&apikey=${
+      process.env.REACT_APP_ETHERSCAN_API_KEY
+    }`
+  )
+    .then((data) => data.json())
+    .then((data) => {
+      thunkApi.dispatch(setTransactions(data.result));
+    });
+});
+
+export const fetchTokens = createAsyncThunk<
+  void,
+  undefined,
+  {
+    // Optional fields for defining thunkApi field types
+    dispatch: AppDispatch;
+    state: RootState;
+  }
+>("fetchTokenContractsForAddress", async (_, thunkApi) => {
+  alchemy.core
+    .getTokenBalances(thunkApi.getState().wallet.walletAddress as string)
+    .then((res) => {
+      res.tokenBalances.forEach((balance) => {
+        thunkApi.dispatch(fetchTokenInfo(balance as TokenBalanceSuccess));
       });
-  };
+    })
+    .catch(alert);
+});
 
-export const fetchTokens =
-  () => async (dispatch: any, getState: () => RootState) => {
-    alchemy.core
-      .getTokenBalances(getState().wallet.walletAddress as string)
-      .then((res) => {
-        res.tokenBalances.forEach((balance) => {
-          dispatch(fetchTokenInfo(balance as TokenBalanceSuccess));
-        });
-      })
-      .catch(alert);
-  };
-
-export const fetchTokenInfo =
-  (token: TokenBalanceSuccess) =>
-  async (dispatch: any, getState: () => RootState) => {
-    alchemy.core
-      .getTokenMetadata(token.contractAddress)
-      .then((resp) => {
-        dispatch(setToken({ ...resp, ...token }));
-      })
-      .catch(alert);
-  };
+export const fetchTokenInfo = createAsyncThunk<
+  void,
+  TokenBalanceSuccess,
+  {
+    // Optional fields for defining thunkApi field types
+    dispatch: AppDispatch;
+    state: RootState;
+  }
+>("fetchTokenCOntractDetails", async (token: TokenBalanceSuccess, thunkApi) => {
+  alchemy.core
+    .getTokenMetadata(token.contractAddress)
+    .then((resp) => {
+      thunkApi.dispatch(setToken({ ...resp, ...token }));
+    })
+    .catch(alert);
+});

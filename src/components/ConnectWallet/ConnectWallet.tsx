@@ -1,6 +1,7 @@
 import detectEthereumProvider from "@metamask/detect-provider";
 import { FC, useContext, useEffect } from "react";
 import { Button, Dropdown, DropdownButton } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   setMetamasInstalled,
@@ -15,6 +16,7 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
   const wallet = useAppSelector((state) => state.wallet);
   const dispatch = useAppDispatch();
   const web3 = useContext(Web3Context);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     const detectMetamask = async () => {
@@ -44,6 +46,7 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
 
   function disconnectWallet(): void {
     dispatch(unsetWalletAddress());
+    setSearchParams({});
   }
 
   if (!wallet.isMetamaskInstalled) {
@@ -56,7 +59,8 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
     <DropdownButton
       align="end"
       id="dropdown-basic-button"
-      title={wallet.walletAddress}>
+      title={wallet.walletAddress}
+    >
       <Dropdown.Item onClick={disconnectWallet}>Disconnect</Dropdown.Item>
     </DropdownButton>
   );

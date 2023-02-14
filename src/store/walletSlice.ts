@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TokenBalanceSuccess, TokenMetadataResponse } from "alchemy-sdk";
+import { fetchEthTransactions, fetchTokenInfo, fetchTokens } from "./thunk";
 
 export interface TokenDetail
   extends TokenMetadataResponse,
@@ -88,6 +89,17 @@ export const walletSlice = createSlice({
       state.tokens.hasData = true;
       state.tokens.loading = false;
     },
+  },
+  extraReducers(builder) {
+    builder.addCase(fetchEthTransactions.pending, (state, action) => {
+      state.ethereum.loading = true;
+    });
+    builder.addCase(fetchTokens.pending, (state, action) => {
+      state.tokens.loading = true;
+    });
+    builder.addCase(fetchTokenInfo.pending, (state, action) => {
+      state.tokens.loading = true;
+    });
   },
 });
 
