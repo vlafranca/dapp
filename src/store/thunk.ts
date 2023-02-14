@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Alchemy, Network, TokenBalanceSuccess } from "alchemy-sdk";
 import { AppDispatch, RootState } from "./store";
-import { setToken, setTransactions } from "./walletSlice";
+import { setNFTs, setToken, setTransactions } from "./walletSlice";
 
 const config = {
   apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
@@ -58,11 +58,28 @@ export const fetchTokenInfo = createAsyncThunk<
     dispatch: AppDispatch;
     state: RootState;
   }
->("fetchTokenCOntractDetails", async (token: TokenBalanceSuccess, thunkApi) => {
+>("fetchTokenContractDetails", async (token: TokenBalanceSuccess, thunkApi) => {
   alchemy.core
     .getTokenMetadata(token.contractAddress)
     .then((resp) => {
       thunkApi.dispatch(setToken({ ...resp, ...token }));
+    })
+    .catch(alert);
+});
+
+export const fetchNFTs = createAsyncThunk<
+  void,
+  undefined,
+  {
+    // Optional fields for defining thunkApi field types
+    dispatch: AppDispatch;
+    state: RootState;
+  }
+>("fetchNFTs", async (_, thunkApi) => {
+  alchemy.nft
+    .getNftsForOwner(thunkApi.getState().wallet.walletAddress as string)
+    .then((res) => {
+      thunkApi.dispatch(setNFTs(res));
     })
     .catch(alert);
 });

@@ -49,7 +49,7 @@ const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
   }, []);
 
   return (
-    <Card className="mb-2">
+    <Card className="mb-2 image-left">
       <Card.Body>
         <Row>
           <Col xs={"auto"}>

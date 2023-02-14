@@ -1,5 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TokenBalanceSuccess, TokenMetadataResponse } from "alchemy-sdk";
+import {
+  OwnedNft,
+  OwnedNftsResponse,
+  TokenBalanceSuccess,
+  TokenMetadataResponse,
+} from "alchemy-sdk";
 import { fetchEthTransactions, fetchTokenInfo, fetchTokens } from "./thunk";
 
 export interface TokenDetail
@@ -22,6 +27,11 @@ export interface WalletState {
     hasData: boolean;
     data?: TokenDetail[];
   };
+  nfts: {
+    loading: boolean;
+    hasData: boolean;
+    data?: OwnedNft[][];
+  };
 }
 
 // Define the initial state using that type
@@ -35,6 +45,10 @@ const initialState: WalletState = {
     hasData: false,
   },
   tokens: {
+    loading: false,
+    hasData: false,
+  },
+  nfts: {
     loading: false,
     hasData: false,
   },
@@ -78,6 +92,9 @@ export const walletSlice = createSlice({
     },
     setToken: (state, action: PayloadAction<TokenDetail>) => {
       if (!state.tokens.data) state.tokens.data = [];
+      state.tokens.hasData = true;
+      state.tokens.loading = false;
+
       const existingIndex = state.tokens.data.findIndex(
         (t) => t.contractAddress === action.payload.contractAddress
       );
@@ -86,8 +103,22 @@ export const walletSlice = createSlice({
       } else {
         state.tokens.data.push(action.payload);
       }
-      state.tokens.hasData = true;
-      state.tokens.loading = false;
+    },
+    setNFTs: (state, action: PayloadAction<OwnedNftsResponse>) => {
+      state.nfts.hasData = true;
+      state.nfts.loading = false;
+
+      state.nfts.data = Object.values(
+        action.payload.ownedNfts.reduce<{ [key: string]: OwnedNft[] }>(
+          (acc, nft) => {
+            if (!acc[nft.contract.address]) acc[nft.contract.address] = [];
+
+            acc[nft.contract.address].push(nft);
+            return acc;
+          },
+          {}
+        )
+      );
     },
   },
   extraReducers(builder) {
@@ -113,6 +144,7 @@ export const {
   updateBalance,
   setTransactions,
   setToken,
+  setNFTs,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

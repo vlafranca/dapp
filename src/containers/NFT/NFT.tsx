@@ -1,47 +1,25 @@
-import { Alchemy, Network, OwnedNft } from "alchemy-sdk";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { Card, Col, Row } from "react-bootstrap";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { fetchNFTs } from "../../store/thunk";
 
 interface NFTProps {}
 
-const config = {
-  apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
-  network: Network.ETH_MAINNET,
-};
-const alchemy = new Alchemy(config);
-
 const NFT: FC<NFTProps> = () => {
   const wallet = useAppSelector((state) => state.wallet);
-  const [collections, setCollections] = useState<OwnedNft[][]>([]);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (!wallet.walletAddress) return;
+    if (!wallet.walletAddress || wallet.nfts.hasData) return;
 
-    alchemy.nft
-      .getNftsForOwner(wallet.walletAddress)
-      .then((res) => {
-        // setCollections(e);
-        console.log(res);
-        setCollections(
-          Object.values(
-            res.ownedNfts.reduce<{ [key: string]: OwnedNft[] }>((acc, nft) => {
-              if (!acc[nft.contract.address]) acc[nft.contract.address] = [];
-
-              acc[nft.contract.address].push(nft);
-              return acc;
-            }, {})
-          )
-        );
-      })
-      .catch(alert);
+    dispatch(fetchNFTs());
   }, []);
 
-  if (!collections.length) return <div>Spinner</div>;
+  if (wallet.nfts.loading) return <div>Spinner</div>;
 
   return (
     <>
-      {collections.map((collection) => {
+      {wallet.nfts.data?.map((collection) => {
         return (
           <>
             <h3>{collection[0].contract.name}</h3>

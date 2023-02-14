@@ -51,7 +51,7 @@ const App: React.FC = () => {
   return (
     <>
       <header>
-        <Navbar bg="light" expand="lg">
+        <Navbar bg="light" expand="lg" collapseOnSelect>
           <Container>
             <Navbar.Brand href="#home">ZDAPP</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
