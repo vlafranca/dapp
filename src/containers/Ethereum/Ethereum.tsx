@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { Badge, Card, Col, Row } from "react-bootstrap";
 import Web3 from "web3";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchEthTransactions } from "../../store/store";
+import { fetchEthTransactions } from "../../store/thunk";
 import { WalletState } from "../../store/walletSlice";
 
 interface EthereumProps {}
@@ -13,6 +13,8 @@ const Ethereum: FC<EthereumProps> = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    if (!wallet.walletAddress || wallet.ethereum.hasData) return;
+
     dispatch(fetchEthTransactions());
   }, []);
 

@@ -1,4 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { TokenBalanceSuccess, TokenMetadataResponse } from "alchemy-sdk";
+
+export interface TokenDetail
+  extends TokenMetadataResponse,
+    TokenBalanceSuccess {}
 
 // Define a type for the slice state
 export interface WalletState {
@@ -7,8 +12,15 @@ export interface WalletState {
   balance: string;
   networkId: number;
   ethereum: {
+    loading: boolean;
+    hasData: boolean;
     transactions?: any[];
-  } | null;
+  };
+  tokens: {
+    loading: boolean;
+    hasData: boolean;
+    data?: TokenDetail[];
+  };
 }
 
 // Define the initial state using that type
@@ -17,7 +29,14 @@ const initialState: WalletState = {
   walletAddress: null,
   balance: "0",
   networkId: 1,
-  ethereum: null,
+  ethereum: {
+    loading: false,
+    hasData: false,
+  },
+  tokens: {
+    loading: false,
+    hasData: false,
+  },
 };
 
 export const walletSlice = createSlice({
@@ -52,8 +71,22 @@ export const walletSlice = createSlice({
       state.balance = action.payload;
     },
     setTransactions: (state, action: PayloadAction<any[]>) => {
-      if (!state.ethereum) state.ethereum = {};
       state.ethereum.transactions = action.payload;
+      state.ethereum.hasData = true;
+      state.ethereum.loading = false;
+    },
+    setToken: (state, action: PayloadAction<TokenDetail>) => {
+      if (!state.tokens.data) state.tokens.data = [];
+      const existingIndex = state.tokens.data.findIndex(
+        (t) => t.contractAddress === action.payload.contractAddress
+      );
+      if (existingIndex > -1) {
+        state.tokens.data[existingIndex] = action.payload;
+      } else {
+        state.tokens.data.push(action.payload);
+      }
+      state.tokens.hasData = true;
+      state.tokens.loading = false;
     },
   },
 });
@@ -67,6 +100,7 @@ export const {
   updateNetwork,
   updateBalance,
   setTransactions,
+  setToken,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

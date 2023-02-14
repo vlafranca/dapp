@@ -57,14 +57,20 @@ const App: React.FC = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="me-auto">
-                <LinkContainer to="/ethereum">
-                  <Nav.Link href="#home">Ethereum</Nav.Link>
+                <LinkContainer
+                  to={{ pathname: "/ethereum", search: window.location.search }}
+                >
+                  <Nav.Link>Ethereum</Nav.Link>
                 </LinkContainer>
-                <LinkContainer to="/tokens">
-                  <Nav.Link href="#link">Tokens</Nav.Link>
+                <LinkContainer
+                  to={{ pathname: "/tokens", search: window.location.search }}
+                >
+                  <Nav.Link>Tokens</Nav.Link>
                 </LinkContainer>
-                <LinkContainer to="/nft">
-                  <Nav.Link href="#link">NFT</Nav.Link>
+                <LinkContainer
+                  to={{ pathname: "/nft", search: window.location.search }}
+                >
+                  <Nav.Link>NFT</Nav.Link>
                 </LinkContainer>
               </Nav>
             </Navbar.Collapse>
