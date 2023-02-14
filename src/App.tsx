@@ -71,13 +71,7 @@ const App: React.FC = () => {
             <Row direction="horizontal" className="justify-content-end" gap={3}>
               {wallet.walletAddress && (
                 <>
-                  <Col className="d-flex">
-                    <Navbar.Text>
-                      {Math.round(Number(wallet.balance) * 1000000) / 1000000}{" "}
-                      eth
-                    </Navbar.Text>
-                  </Col>
-                  <Col>
+                  <Col xs="auto">
                     <DropdownButton
                       id="dropdown-basic-button"
                       title={EthNetworkNameMapping[wallet.networkId]}

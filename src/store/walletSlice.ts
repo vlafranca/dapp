@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
-interface WalletState {
+export interface WalletState {
   isMetamaskInstalled: boolean;
   walletAddress: string | null;
   balance: string;
