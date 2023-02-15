@@ -38,9 +38,15 @@ const Tokens: FC<TokensProps> = () => {
           </Button>
         </Col>
       </Row>
-      {wallet?.tokens.data?.map((token, i) => (
-        <TokenDetailCard key={i} token={token} />
-      ))}
+      {wallet?.tokens.data?.length ? (
+        wallet?.tokens.data?.map((token, i) => (
+          <TokenDetailCard key={i} token={token} />
+        ))
+      ) : (
+        <Row className="mt-4">
+          <Col className="text-center">No Token recorded</Col>
+        </Row>
+      )}
     </>
   );
 };
@@ -69,7 +75,8 @@ const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
           </Col>
           <Col
             md={3}
-            className="ms-auto d-flex justify-content-center align-items-center text-center">
+            className="ms-auto d-flex justify-content-center align-items-center text-center"
+          >
             <div>
               <p className="mb-0">
                 {tokenBalance}({token.symbol})

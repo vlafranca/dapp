@@ -28,6 +28,7 @@ export interface WalletState {
   ethereum: {
     loading: boolean;
     hasData: boolean;
+    page: number;
     transactions?: TransactionDetail[];
   };
   tokens: {
@@ -53,6 +54,7 @@ const initialState: WalletState = {
   ethereum: {
     loading: false,
     hasData: false,
+    page: 1,
   },
   tokens: {
     loading: false,
@@ -102,6 +104,19 @@ export const walletSlice = createSlice({
     },
     setTransactions: (state, action: PayloadAction<EtherscanTransaction[]>) => {
       state.ethereum.transactions = action.payload;
+      state.ethereum.hasData = true;
+      state.ethereum.loading = false;
+      state.ethereum.page = 1;
+    },
+    pushTransactions: (
+      state,
+      action: PayloadAction<EtherscanTransaction[]>
+    ) => {
+      state.ethereum.transactions = [
+        ...(state.ethereum.transactions || []),
+        ...action.payload,
+      ];
+      state.ethereum.page = state.ethereum.page + 1;
       state.ethereum.hasData = true;
       state.ethereum.loading = false;
     },
@@ -192,6 +207,7 @@ export const {
   updateNetwork,
   updateBalance,
   setTransactions,
+  pushTransactions,
   setToken,
   setNFTs,
   setTokenPrice,

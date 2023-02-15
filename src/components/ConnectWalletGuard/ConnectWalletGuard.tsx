@@ -80,7 +80,7 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
 
   return (
     <ErrorBoundary>
-      <Container className="mt-2">{children}</Container>
+      <Container className="mt-2 pb-4">{children}</Container>
     </ErrorBoundary>
   );
 };

@@ -8,6 +8,7 @@ import {
 import { ExternalApi } from "../types/external";
 import { AppDispatch, RootState } from "./store";
 import {
+  pushTransactions,
   setError,
   setEthTransacPrice,
   setNFTs,
@@ -26,23 +27,23 @@ const alchemy = new Alchemy(config);
 
 export const fetchEthTransactions = createAsyncThunk<
   void,
-  undefined,
+  number,
   {
     // Optional fields for defining thunkApi field types
     dispatch: AppDispatch;
     state: RootState;
   }
->("fetchEtherscanTransactions", async (_, thunkApi) => {
+>("fetchEtherscanTransactions", async (page, thunkApi) => {
   fetch(
     `http://api.etherscan.io/api?module=account&action=txlist&address=${
       thunkApi.getState().wallet.walletAddress
-    }&startblock=0&endblock=99999999&sort=asc&page=1&offset=10&apikey=${
+    }&startblock=0&endblock=99999999&sort=asc&page=${page}&offset=10&apikey=${
       process.env.REACT_APP_ETHERSCAN_API_KEY
     }`
   )
     .then((data) => data.json())
     .then((data: EtherscanTxListResponse) => {
-      if (data.status === "0") {
+      if (data.status === "0" && typeof data.result === "string") {
         thunkApi.dispatch(
           setError({
             type: ExternalApi.Etherscan,
@@ -51,7 +52,15 @@ export const fetchEthTransactions = createAsyncThunk<
         );
         return;
       }
-      thunkApi.dispatch(setTransactions(data.result as EtherscanTransaction[]));
+      if (page === 1) {
+        thunkApi.dispatch(
+          setTransactions(data.result as EtherscanTransaction[])
+        );
+      } else {
+        thunkApi.dispatch(
+          pushTransactions(data.result as EtherscanTransaction[])
+        );
+      }
     })
     .catch((err) => thunkApi.dispatch(setError(err)));
 });

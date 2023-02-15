@@ -20,7 +20,7 @@ const Ethereum: FC<EthereumProps> = () => {
     refresh();
   }, []);
 
-  const refresh = () => dispatch(fetchEthTransactions());
+  const refresh = () => dispatch(fetchEthTransactions(1));
 
   if (wallet?.ethereum?.loading) {
     return <Spinner />;
@@ -41,16 +41,37 @@ const Ethereum: FC<EthereumProps> = () => {
           </Button>
         </Col>
       </Row>
-      {wallet?.ethereum?.transactions &&
-        wallet.ethereum.transactions.map((transaction: any, i: number) => {
-          return (
-            <TransactionCard
-              index={i}
-              transaction={transaction}
-              wallet={wallet}
-            />
-          );
-        })}
+      {wallet?.ethereum.transactions?.length ? (
+        <>
+          {wallet.ethereum.transactions.map((transaction: any, i: number) => {
+            return (
+              <TransactionCard
+                index={i}
+                transaction={transaction}
+                wallet={wallet}
+              />
+            );
+          })}
+
+          {!(wallet?.ethereum.transactions?.length % 10) && (
+            <Row>
+              <Col className="text-center">
+                <Button
+                  onClick={() =>
+                    dispatch(fetchEthTransactions(wallet.ethereum.page + 1))
+                  }
+                >
+                  Load more
+                </Button>
+              </Col>
+            </Row>
+          )}
+        </>
+      ) : (
+        <Row className="mt-4">
+          <Col className="text-center">No transactions recorded</Col>
+        </Row>
+      )}
     </>
   );
 };
@@ -88,8 +109,9 @@ const TransactionCard: FC<{
             {date.toLocaleDateString()} {date.toLocaleTimeString()}
           </Col>
           <Col
-            md={3}
-            className="ms-auto d-flex justify-content-end align-items-center text-end">
+            xs="auto"
+            className="d-flex justify-content-end align-items-center text-end"
+          >
             <div>
               <p className="mb-0">{amount} ETH</p>
               {transaction.price &&

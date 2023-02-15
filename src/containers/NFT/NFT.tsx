@@ -18,6 +18,14 @@ const NFT: FC<NFTProps> = () => {
 
   if (wallet.nfts.loading) return <Spinner />;
 
+  if (!wallet.nfts.data?.length) {
+    return (
+      <Row className="mt-4">
+        <Col className="text-center">No NFT yet</Col>
+      </Row>
+    );
+  }
+
   return (
     <>
       {wallet.nfts.data?.map((collection) => {

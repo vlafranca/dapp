@@ -53,7 +53,7 @@ const App: React.FC = () => {
   return (
     <>
       <header>
-        <Navbar bg="light" expand="lg" collapseOnSelect>
+        <Navbar bg="light" expand="lg" className="mb-2" collapseOnSelect>
           <Container>
             <Navbar.Brand href="#home">ZDAPP</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -63,15 +63,18 @@ const App: React.FC = () => {
                   to={{
                     pathname: "/ethereum",
                     search: window.location.search,
-                  }}>
+                  }}
+                >
                   <Nav.Link>Ethereum</Nav.Link>
                 </LinkContainer>
                 <LinkContainer
-                  to={{ pathname: "/tokens", search: window.location.search }}>
+                  to={{ pathname: "/tokens", search: window.location.search }}
+                >
                   <Nav.Link>Tokens</Nav.Link>
                 </LinkContainer>
                 <LinkContainer
-                  to={{ pathname: "/nft", search: window.location.search }}>
+                  to={{ pathname: "/nft", search: window.location.search }}
+                >
                   <Nav.Link>NFT</Nav.Link>
                 </LinkContainer>
               </Nav>
@@ -84,12 +87,14 @@ const App: React.FC = () => {
                       id="dropdown-basic-button"
                       title={EthNetworkNameMapping[wallet.networkId]}
                       defaultValue={EthNetworks.Goerli}
-                      onSelect={changeNetwork}>
+                      onSelect={changeNetwork}
+                    >
                       {Networks.map((network, i) => (
                         <Dropdown.Item
                           key={i}
                           active={wallet.networkId === network}
-                          eventKey={network}>
+                          eventKey={network}
+                        >
                           {EthNetworkNameMapping[network]}
                         </Dropdown.Item>
                       ))}
@@ -126,7 +131,8 @@ const ErrorToast: FC<{ title: string; message: string }> = ({
       onClose={() => setShow(false)}
       show={show}
       delay={5000}
-      autohide>
+      autohide
+    >
       <Toast.Header>
         <strong className="me-auto">{title}</strong>
       </Toast.Header>
