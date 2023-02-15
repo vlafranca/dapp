@@ -51,7 +51,7 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
   // TODO improve css for this
   if (!wallet.isMetamaskInstalled || !wallet.walletAddress) {
     return (
-      <Container className="d-flex h-100 justify-content-center align-items-center flex-column">
+      <Container className="d-flex h-100 justify-content-center align-items-center flex-column content">
         <ConnectWallet />
         <Row className="mt-4 mb-4">
           <Col className="text-center">OR</Col>
@@ -80,7 +80,7 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
 
   return (
     <ErrorBoundary>
-      <Container className="mt-2 pb-4">{children}</Container>
+      <Container className="mt-2 pb-4 content">{children}</Container>
     </ErrorBoundary>
   );
 };

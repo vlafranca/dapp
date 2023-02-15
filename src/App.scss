@@ -1,12 +1,4 @@
-// $container-max-widths: (
-//   sm: 540px,
-//   md: 720px,
-//   lg: 960px,
-//   xl: 960px,
-//   xxl: 960px,
-// );
-
-// @import "../node_modules/bootstrap/scss/bootstrap";
+@import "../node_modules/bootstrap/scss/bootstrap-utilities.scss";
 
 .App {
   text-align: center;
@@ -39,5 +31,11 @@
 .card.image-left {
   img {
     max-width: 64px;
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .content {
+    max-width: 768px;
   }
 }
