@@ -1,5 +1,6 @@
 import { FC, useEffect } from "react";
-import { Badge, Card, Col, Row } from "react-bootstrap";
+import { Badge, Button, Card, Col, Row } from "react-bootstrap";
+import { ArrowRepeat } from "react-bootstrap-icons";
 import Web3 from "web3";
 import Spinner from "../../components/Spinner/Spinner";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -16,8 +17,10 @@ const Ethereum: FC<EthereumProps> = () => {
   useEffect(() => {
     if (!wallet.walletAddress || wallet.ethereum.hasData) return;
 
-    dispatch(fetchEthTransactions());
+    refresh();
   }, []);
+
+  const refresh = () => dispatch(fetchEthTransactions());
 
   if (wallet?.ethereum?.loading) {
     return <Spinner />;
@@ -31,6 +34,11 @@ const Ethereum: FC<EthereumProps> = () => {
         </Col>
         <Col xs="auto" className="d-flex align-items-center">
           ({Math.round(Number(wallet.balance) * 1000000) / 1000000} eth)
+        </Col>
+        <Col md="auto" xs="12" className="d-flex align-items-center ms-auto">
+          <Button className="d-flex align-items-center" onClick={refresh}>
+            <ArrowRepeat />
+          </Button>
         </Col>
       </Row>
       {wallet?.ethereum?.transactions &&

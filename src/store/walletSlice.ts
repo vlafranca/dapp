@@ -11,7 +11,7 @@ import { fetchEthTransactions, fetchTokenInfo, fetchTokens } from "./thunk";
 export interface TokenDetail
   extends TokenMetadataResponse,
     TokenBalanceSuccess {
-  price: number;
+  price?: number;
 }
 
 // Define a type for the slice state
@@ -28,6 +28,7 @@ export interface WalletState {
   tokens: {
     loading: boolean;
     hasData: boolean;
+    totalPrice: number;
     data?: TokenDetail[];
   };
   nfts: {
@@ -51,6 +52,7 @@ const initialState: WalletState = {
   tokens: {
     loading: false,
     hasData: false,
+    totalPrice: 0,
   },
   nfts: {
     loading: false,
@@ -135,6 +137,10 @@ export const walletSlice = createSlice({
         (token) => token.contractAddress === action.payload.contractAddress
       );
       if (token) token.price = action.payload.price;
+      state.tokens.totalPrice = state.tokens.data.reduce(
+        (acc, v) => acc + (v.price || 0),
+        0
+      );
     },
     setEthTransacPrice: (
       state,
