@@ -32,6 +32,7 @@ export interface WalletState {
   networkId: number;
   ethereum: {
     loading: boolean;
+    loadingMore: boolean;
     hasData: boolean;
     page: number;
     transactions?: TransactionDetail[];
@@ -58,6 +59,7 @@ const initialState: WalletState = {
   networkId: 1,
   ethereum: {
     loading: false,
+    loadingMore: false,
     hasData: false,
     page: 1,
   },
@@ -123,7 +125,7 @@ export const walletSlice = createSlice({
       ];
       state.ethereum.page = state.ethereum.page + 1;
       state.ethereum.hasData = true;
-      state.ethereum.loading = false;
+      state.ethereum.loadingMore = false;
     },
     setToken: (state, action: PayloadAction<TokenDetail>) => {
       if (!state.tokens.data) state.tokens.data = [];
@@ -191,7 +193,12 @@ export const walletSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(fetchEthTransactions.pending, (state, action) => {
-      state.ethereum.loading = true;
+      // arg is page number parameter
+      if (action.meta.arg === 1) {
+        state.ethereum.loading = true;
+      } else {
+        state.ethereum.loadingMore = true;
+      }
     });
     builder.addCase(fetchTokens.pending, (state, action) => {
       state.tokens.loading = true;

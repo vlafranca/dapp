@@ -1,7 +1,7 @@
 import { FC, useEffect } from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { ArrowRepeat } from "react-bootstrap-icons";
-import Spinner from "../../components/Spinner/Spinner";
+import LoadingIndicator from "../../components/Spinner/Spinner";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchNFTs } from "../../store/thunk";
 
@@ -19,7 +19,7 @@ const NFT: FC<NFTProps> = () => {
 
   const refresh = () => dispatch(fetchNFTs());
 
-  if (wallet.nfts.loading) return <Spinner />;
+  if (wallet.nfts.loading) return <LoadingIndicator />;
 
   return (
     <>

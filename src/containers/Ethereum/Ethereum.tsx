@@ -1,8 +1,8 @@
 import { FC, useEffect } from "react";
-import { Badge, Button, Card, Col, Row } from "react-bootstrap";
+import { Badge, Button, Card, Col, Row, Spinner } from "react-bootstrap";
 import { ArrowRepeat } from "react-bootstrap-icons";
 import Web3 from "web3";
-import Spinner from "../../components/Spinner/Spinner";
+import LoadingIndicator from "../../components/Spinner/Spinner";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchEthTransactions, fetchHistoricalPrice } from "../../store/thunk";
 import { WalletState } from "../../store/walletSlice";
@@ -23,7 +23,7 @@ const Ethereum: FC<EthereumProps> = () => {
   const refresh = () => dispatch(fetchEthTransactions(1));
 
   if (wallet?.ethereum?.loading) {
-    return <Spinner />;
+    return <LoadingIndicator />;
   }
 
   return (
@@ -46,7 +46,7 @@ const Ethereum: FC<EthereumProps> = () => {
           {wallet.ethereum.transactions.map((transaction: any, i: number) => {
             return (
               <TransactionCard
-                index={i}
+                key={i}
                 transaction={transaction}
                 wallet={wallet}
               />
@@ -56,13 +56,17 @@ const Ethereum: FC<EthereumProps> = () => {
           {!(wallet?.ethereum.transactions?.length % 10) && (
             <Row>
               <Col className="text-center">
-                <Button
-                  onClick={() =>
-                    dispatch(fetchEthTransactions(wallet.ethereum.page + 1))
-                  }
-                >
-                  Load more
-                </Button>
+                {wallet.ethereum.loadingMore ? (
+                  <Spinner />
+                ) : (
+                  <Button
+                    onClick={() =>
+                      dispatch(fetchEthTransactions(wallet.ethereum.page + 1))
+                    }
+                  >
+                    Load more
+                  </Button>
+                )}
               </Col>
             </Row>
           )}
@@ -77,10 +81,9 @@ const Ethereum: FC<EthereumProps> = () => {
 };
 
 const TransactionCard: FC<{
-  index: number;
   transaction: any;
   wallet: WalletState;
-}> = ({ index, transaction, wallet }) => {
+}> = ({ transaction, wallet }) => {
   const amount = Web3.utils.fromWei(transaction.value);
   const date = new Date(parseInt(transaction.timeStamp) * 1000);
   const dispatch = useAppDispatch();
@@ -92,7 +95,7 @@ const TransactionCard: FC<{
   }, []);
 
   return (
-    <Card className="mb-2" key={index}>
+    <Card className="mb-2">
       <Card.Body>
         <Row>
           <Col className="d-flex flex-column">

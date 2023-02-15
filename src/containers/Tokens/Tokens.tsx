@@ -2,7 +2,7 @@ import { Utils } from "alchemy-sdk";
 import { FC, useEffect } from "react";
 import { Button, Card, Col, Image, Row } from "react-bootstrap";
 import { ArrowRepeat } from "react-bootstrap-icons";
-import Spinner from "../../components/Spinner/Spinner";
+import LoadingIndicator from "../../components/Spinner/Spinner";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchPrice, fetchTokens } from "../../store/thunk";
 import { TokenDetail } from "../../store/walletSlice";
@@ -21,7 +21,7 @@ const Tokens: FC<TokensProps> = () => {
 
   const refresh = () => dispatch(fetchTokens());
 
-  if (wallet.tokens.loading) return <Spinner />;
+  if (wallet.tokens.loading) return <LoadingIndicator />;
 
   return (
     <>

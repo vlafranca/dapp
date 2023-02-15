@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { Col, Row, Spinner as SpinnerBootstrap } from "react-bootstrap";
 
-interface SpinnerProps {}
+interface LoadingIndicatorProps {}
 
-const Spinner: FC<SpinnerProps> = () => (
+const LoadingIndicator: FC<LoadingIndicatorProps> = () => (
   <Row>
     <Col className="text-center mt-5">
       <SpinnerBootstrap animation="border" />
@@ -11,4 +11,4 @@ const Spinner: FC<SpinnerProps> = () => (
   </Row>
 );
 
-export default Spinner;
+export default LoadingIndicator;
