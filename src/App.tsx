@@ -1,5 +1,5 @@
 import { EventKey } from "@restart/ui/types";
-import React, { useContext } from "react";
+import React, { FC, useContext, useState } from "react";
 import {
   Col,
   Container,
@@ -8,6 +8,8 @@ import {
   Nav,
   Navbar,
   Row,
+  Toast,
+  ToastContainer,
 } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { Outlet } from "react-router-dom";
@@ -58,18 +60,18 @@ const App: React.FC = () => {
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="me-auto">
                 <LinkContainer
-                  to={{ pathname: "/ethereum", search: window.location.search }}
-                >
+                  to={{
+                    pathname: "/ethereum",
+                    search: window.location.search,
+                  }}>
                   <Nav.Link>Ethereum</Nav.Link>
                 </LinkContainer>
                 <LinkContainer
-                  to={{ pathname: "/tokens", search: window.location.search }}
-                >
+                  to={{ pathname: "/tokens", search: window.location.search }}>
                   <Nav.Link>Tokens</Nav.Link>
                 </LinkContainer>
                 <LinkContainer
-                  to={{ pathname: "/nft", search: window.location.search }}
-                >
+                  to={{ pathname: "/nft", search: window.location.search }}>
                   <Nav.Link>NFT</Nav.Link>
                 </LinkContainer>
               </Nav>
@@ -82,14 +84,12 @@ const App: React.FC = () => {
                       id="dropdown-basic-button"
                       title={EthNetworkNameMapping[wallet.networkId]}
                       defaultValue={EthNetworks.Goerli}
-                      onSelect={changeNetwork}
-                    >
+                      onSelect={changeNetwork}>
                       {Networks.map((network, i) => (
                         <Dropdown.Item
                           key={i}
                           active={wallet.networkId === network}
-                          eventKey={network}
-                        >
+                          eventKey={network}>
                           {EthNetworkNameMapping[network]}
                         </Dropdown.Item>
                       ))}
@@ -105,7 +105,33 @@ const App: React.FC = () => {
         </Navbar>
       </header>
       <Outlet />
+      <ToastContainer position="top-end" className="p-3">
+        {wallet.errors.map((err, i) => (
+          <ErrorToast key={i} title={err.type} message={err.message} />
+        ))}
+      </ToastContainer>
     </>
+  );
+};
+
+const ErrorToast: FC<{ title: string; message: string }> = ({
+  title,
+  message,
+}) => {
+  const [show, setShow] = useState(true);
+
+  return (
+    <Toast
+      bg="danger"
+      onClose={() => setShow(false)}
+      show={show}
+      delay={5000}
+      autohide>
+      <Toast.Header>
+        <strong className="me-auto">{title}</strong>
+      </Toast.Header>
+      <Toast.Body>{message}</Toast.Body>
+    </Toast>
   );
 };
 

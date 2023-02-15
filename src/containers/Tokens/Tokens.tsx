@@ -1,8 +1,9 @@
-import { FC, useEffect, useState } from "react";
+import { Utils } from "alchemy-sdk";
+import { FC, useEffect } from "react";
 import { Card, Col, Image, Row } from "react-bootstrap";
 import Spinner from "../../components/Spinner/Spinner";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchTokens } from "../../store/thunk";
+import { fetchPrice, fetchTokens } from "../../store/thunk";
 import { TokenDetail } from "../../store/walletSlice";
 
 interface TokensProps {}
@@ -29,24 +30,11 @@ const Tokens: FC<TokensProps> = () => {
 };
 
 const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
-  const [price, setPrice] = useState<number | null>(null);
-  const tokenBalance = 0; //Utils.formatEther(token.tokenBalance as string);
+  const dispatch = useAppDispatch();
+  const tokenBalance = Utils.formatEther(token.tokenBalance as string);
 
   useEffect(() => {
-    //TODO get coin prices all at once
-    fetch(
-      `https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${token.contractAddress}&vs_currencies=USD`
-    )
-      .then((resp) => resp.json())
-      .then(
-        (price: {
-          [key: string]: {
-            usd: number;
-          };
-        }) =>
-          price[token.contractAddress] &&
-          setPrice(price[token.contractAddress].usd)
-      );
+    dispatch(fetchPrice(token));
   }, []);
 
   return (
@@ -68,7 +56,7 @@ const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
               <p className="mb-0">
                 {tokenBalance}({token.symbol})
               </p>
-              {price && "$" + price * Number(tokenBalance)}
+              {token.price && "$" + token.price * Number(tokenBalance)}
             </div>
           </Col>
         </Row>

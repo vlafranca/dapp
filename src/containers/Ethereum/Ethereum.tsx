@@ -1,9 +1,9 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { Badge, Card, Col, Row } from "react-bootstrap";
 import Web3 from "web3";
 import Spinner from "../../components/Spinner/Spinner";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchEthTransactions } from "../../store/thunk";
+import { fetchEthTransactions, fetchHistoricalPrice } from "../../store/thunk";
 import { WalletState } from "../../store/walletSlice";
 
 interface EthereumProps {}
@@ -52,18 +52,12 @@ const TransactionCard: FC<{
   transaction: any;
   wallet: WalletState;
 }> = ({ index, transaction, wallet }) => {
-  const [price, setPrice] = useState<number | null>(null);
   const amount = Web3.utils.fromWei(transaction.value);
   const date = new Date(parseInt(transaction.timeStamp) * 1000);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    fetch(
-      `https://api.coingecko.com/api/v3/coins/ethereum/history?date=${date.getDate()}-${
-        date.getUTCMonth() + 1
-      }-${date.getFullYear()}&localization=false`
-    )
-      .then((resp) => resp.json())
-      .then((data: any) => setPrice(data.market_data.current_price.usd));
+    dispatch(fetchHistoricalPrice(transaction));
   }, []);
 
   return (
@@ -88,7 +82,8 @@ const TransactionCard: FC<{
             className="ms-auto d-flex justify-content-end align-items-center text-end">
             <div>
               <p className="mb-0">{amount} ETH</p>
-              {price && "$" + (price * Number(amount)).toPrecision(4)}
+              {transaction.price &&
+                "$" + (transaction.price * Number(amount)).toPrecision(4)}
             </div>
           </Col>
         </Row>

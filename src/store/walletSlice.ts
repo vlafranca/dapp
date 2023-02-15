@@ -5,11 +5,14 @@ import {
   TokenBalanceSuccess,
   TokenMetadataResponse,
 } from "alchemy-sdk";
+import { ExternalApi } from "../types/external";
 import { fetchEthTransactions, fetchTokenInfo, fetchTokens } from "./thunk";
 
 export interface TokenDetail
   extends TokenMetadataResponse,
-    TokenBalanceSuccess {}
+    TokenBalanceSuccess {
+  price: number;
+}
 
 // Define a type for the slice state
 export interface WalletState {
@@ -32,6 +35,7 @@ export interface WalletState {
     hasData: boolean;
     data?: OwnedNft[][];
   };
+  errors: { type: string; message: string }[];
 }
 
 // Define the initial state using that type
@@ -52,6 +56,7 @@ const initialState: WalletState = {
     loading: false,
     hasData: false,
   },
+  errors: [],
 };
 
 export const walletSlice = createSlice({
@@ -120,6 +125,35 @@ export const walletSlice = createSlice({
         )
       );
     },
+    setTokenPrice: (
+      state,
+      action: PayloadAction<{ contractAddress: string; price: number }>
+    ) => {
+      if (!state.tokens.data) return;
+
+      const token = state.tokens.data.find(
+        (token) => token.contractAddress === action.payload.contractAddress
+      );
+      if (token) token.price = action.payload.price;
+    },
+    setEthTransacPrice: (
+      state,
+      action: PayloadAction<{ transaction: any; price: number }>
+    ) => {
+      if (!state.ethereum.transactions) return;
+
+      const tr = state.ethereum.transactions.find(
+        (tr) => tr.timeStamp === action.payload.transaction.timeStamp
+      );
+      if (tr) tr.price = action.payload.price;
+    },
+    setError: (
+      state,
+      action: PayloadAction<{ message: string; type: ExternalApi }>
+    ) => {
+      console.log(action);
+      state.errors.push(action.payload);
+    },
   },
   extraReducers(builder) {
     builder.addCase(fetchEthTransactions.pending, (state, action) => {
@@ -145,6 +179,9 @@ export const {
   setTransactions,
   setToken,
   setNFTs,
+  setTokenPrice,
+  setEthTransacPrice,
+  setError,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;
