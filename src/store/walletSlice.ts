@@ -5,12 +5,17 @@ import {
   TokenBalanceSuccess,
   TokenMetadataResponse,
 } from "alchemy-sdk";
+import { EtherscanTransaction } from "../types/etherscan";
 import { ExternalApi } from "../types/external";
 import { fetchEthTransactions, fetchTokenInfo, fetchTokens } from "./thunk";
 
 export interface TokenDetail
   extends TokenMetadataResponse,
     TokenBalanceSuccess {
+  price?: number;
+}
+
+export interface TransactionDetail extends EtherscanTransaction {
   price?: number;
 }
 
@@ -23,7 +28,7 @@ export interface WalletState {
   ethereum: {
     loading: boolean;
     hasData: boolean;
-    transactions?: any[];
+    transactions?: TransactionDetail[];
   };
   tokens: {
     loading: boolean;
@@ -92,7 +97,7 @@ export const walletSlice = createSlice({
     updateBalance: (state, action: PayloadAction<string>) => {
       state.balance = action.payload;
     },
-    setTransactions: (state, action: PayloadAction<any[]>) => {
+    setTransactions: (state, action: PayloadAction<EtherscanTransaction[]>) => {
       state.ethereum.transactions = action.payload;
       state.ethereum.hasData = true;
       state.ethereum.loading = false;

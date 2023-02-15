@@ -1,5 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Alchemy, Network, TokenBalanceSuccess } from "alchemy-sdk";
+import { CoinGeckoHistoricalResponse } from "../types/coingecko";
+import {
+  EtherscanTransaction,
+  EtherscanTxListResponse,
+} from "../types/etherscan";
 import { ExternalApi } from "../types/external";
 import { AppDispatch, RootState } from "./store";
 import {
@@ -10,6 +15,7 @@ import {
   setTokenPrice,
   setTransactions,
   TokenDetail,
+  TransactionDetail,
 } from "./walletSlice";
 
 const config = {
@@ -35,14 +41,17 @@ export const fetchEthTransactions = createAsyncThunk<
     }`
   )
     .then((data) => data.json())
-    .then((data: { message: string; result: any; status: "0" | "1" }) => {
+    .then((data: EtherscanTxListResponse) => {
       if (data.status === "0") {
         thunkApi.dispatch(
-          setError({ type: ExternalApi.Etherscan, message: data.result })
+          setError({
+            type: ExternalApi.Etherscan,
+            message: data.result as string,
+          })
         );
         return;
       }
-      thunkApi.dispatch(setTransactions(data.result));
+      thunkApi.dispatch(setTransactions(data.result as EtherscanTransaction[]));
     })
     .catch((err) => thunkApi.dispatch(setError(err)));
 });
@@ -160,7 +169,7 @@ export const fetchPrice = createAsyncThunk<
 
 export const fetchHistoricalPrice = createAsyncThunk<
   void,
-  any,
+  TransactionDetail,
   {
     // Optional fields for defining thunkApi field types
     dispatch: AppDispatch;
@@ -175,7 +184,7 @@ export const fetchHistoricalPrice = createAsyncThunk<
     }-${date.getFullYear()}&localization=false`
   )
     .then((resp) => resp.json())
-    .then((data: any) =>
+    .then((data: CoinGeckoHistoricalResponse) =>
       thunkApi.dispatch(
         setEthTransacPrice({
           transaction,

@@ -65,6 +65,8 @@ const TransactionCard: FC<{
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    if (transaction.price !== undefined) return;
+
     dispatch(fetchHistoricalPrice(transaction));
   }, []);
 
