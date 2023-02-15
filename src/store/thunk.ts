@@ -1,14 +1,21 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Alchemy, Network, TokenBalanceSuccess } from "alchemy-sdk";
+import {
+  Alchemy,
+  AlchemySettings,
+  Network,
+  TokenBalanceSuccess,
+} from "alchemy-sdk";
 import { CoinGeckoHistoricalResponse } from "../types/coingecko";
 import {
   EtherscanTransaction,
   EtherscanTxListResponse,
 } from "../types/etherscan";
 import { ExternalApi } from "../types/external";
+import { EthNetworks } from "../types/web3";
 import { AppDispatch, RootState } from "./store";
 import {
   pushTransactions,
+  resetItems,
   setError,
   setEthTransacPrice,
   setNFTs,
@@ -19,11 +26,22 @@ import {
   TransactionDetail,
 } from "./walletSlice";
 
-const config = {
+const config: AlchemySettings = {
   apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
   network: Network.ETH_MAINNET,
 };
-const alchemy = new Alchemy(config);
+let alchemy = new Alchemy(config);
+
+export const EtherscanEndpoints: { [key: number]: string } = {
+  [EthNetworks.MainNet]: "http://api.etherscan.io",
+  [EthNetworks.Goerli]: "http://api-goerli.etherscan.io",
+};
+
+export const configureAlchemy =
+  (network: Network) => (dispatch: AppDispatch) => {
+    alchemy = new Alchemy({ ...config, network });
+    dispatch(resetItems());
+  };
 
 export const fetchEthTransactions = createAsyncThunk<
   void,
@@ -35,7 +53,9 @@ export const fetchEthTransactions = createAsyncThunk<
   }
 >("fetchEtherscanTransactions", async (page, thunkApi) => {
   fetch(
-    `http://api.etherscan.io/api?module=account&action=txlist&address=${
+    `${
+      EtherscanEndpoints[thunkApi.getState().wallet.networkId]
+    }/api?module=account&action=txlist&address=${
       thunkApi.getState().wallet.walletAddress
     }&startblock=0&endblock=99999999&sort=asc&page=${page}&offset=10&apikey=${
       process.env.REACT_APP_ETHERSCAN_API_KEY

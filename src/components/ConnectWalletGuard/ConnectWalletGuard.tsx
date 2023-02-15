@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { ErrorBoundary } from "../../errors/ErrorBoundary";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setMetamasInstalled, setWalletAddress } from "../../store/walletSlice";
+import { EthNetworks } from "../../types/web3";
 import ConnectWallet from "../ConnectWallet/ConnectWallet";
 import ThemeButton from "../ThemeButton/ThemeButton";
 
@@ -27,7 +28,7 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
         setWalletAddress({
           address: searchParams.get("wallet") as string,
           balance: "0",
-          networkId: 1,
+          networkId: EthNetworks.MainNet,
         })
       );
     }
@@ -41,7 +42,7 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
       setWalletAddress({
         address: inputValue,
         balance: "0",
-        networkId: 1,
+        networkId: EthNetworks.MainNet,
       })
     );
     setSearchParams({

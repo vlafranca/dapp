@@ -17,7 +17,7 @@ const NFT: FC<NFTProps> = () => {
     if (!wallet.walletAddress || wallet.nfts.hasData) return;
 
     refresh();
-  }, []);
+  }, [wallet.networkId]);
 
   const refresh = () => dispatch(fetchNFTs());
 

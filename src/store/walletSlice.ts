@@ -7,6 +7,7 @@ import {
 } from "alchemy-sdk";
 import { EtherscanTransaction } from "../types/etherscan";
 import { ExternalApi } from "../types/external";
+import { EthNetworks } from "../types/web3";
 import {
   fetchEthTransactions,
   fetchNFTs,
@@ -29,7 +30,7 @@ export interface WalletState {
   isMetamaskInstalled: boolean;
   walletAddress: string | null;
   balance: string;
-  networkId: number;
+  networkId: EthNetworks;
   ethereum: {
     loading: boolean;
     loadingMore: boolean;
@@ -56,7 +57,7 @@ const initialState: WalletState = {
   isMetamaskInstalled: false,
   walletAddress: null,
   balance: "0",
-  networkId: 1,
+  networkId: EthNetworks.MainNet,
   ethereum: {
     loading: false,
     loadingMore: false,
@@ -79,8 +80,21 @@ export const walletSlice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
-    reset: (state) => {
-      state = initialState;
+    reset: (state) => initialState,
+    resetItems: (state) => {
+      console.log(initialState);
+      state = {
+        ...state,
+        ethereum: initialState.ethereum,
+        tokens: initialState.tokens,
+        nfts: initialState.nfts,
+        errors: [],
+      };
+
+      return state;
+    },
+    setNetwork: (state, action: PayloadAction<EthNetworks>) => {
+      state.networkId = action.payload;
     },
     setMetamasInstalled: (state) => {
       state.isMetamaskInstalled = true;
@@ -93,7 +107,7 @@ export const walletSlice = createSlice({
       action: PayloadAction<{
         address: string;
         balance: string;
-        networkId: number;
+        networkId: EthNetworks;
       }>
     ) => {
       state.walletAddress = action.payload.address;
@@ -103,7 +117,7 @@ export const walletSlice = createSlice({
     unsetWalletAddress: (state) => {
       state.walletAddress = null;
     },
-    updateNetwork: (state, action: PayloadAction<number>) => {
+    updateNetwork: (state, action: PayloadAction<EthNetworks>) => {
       state.networkId = action.payload;
     },
     updateBalance: (state, action: PayloadAction<string>) => {
@@ -187,7 +201,6 @@ export const walletSlice = createSlice({
       state,
       action: PayloadAction<{ message: string; type: ExternalApi }>
     ) => {
-      console.log(action);
       state.errors.push(action.payload);
     },
   },
@@ -228,6 +241,8 @@ export const {
   setTokenPrice,
   setEthTransacPrice,
   setError,
+  resetItems,
+  setNetwork,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

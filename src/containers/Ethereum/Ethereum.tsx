@@ -21,7 +21,7 @@ const Ethereum: FC<EthereumProps> = () => {
     if (!wallet.walletAddress || wallet.ethereum.hasData) return;
 
     refresh();
-  }, []);
+  }, [wallet.networkId]);
 
   const refresh = () => dispatch(fetchEthTransactions(1));
 
@@ -65,8 +65,7 @@ const Ethereum: FC<EthereumProps> = () => {
                   <Button
                     onClick={() =>
                       dispatch(fetchEthTransactions(wallet.ethereum.page + 1))
-                    }
-                  >
+                    }>
                     Load more
                   </Button>
                 )}
@@ -117,8 +116,7 @@ const TransactionCard: FC<{
           </Col>
           <Col
             xs="auto"
-            className="d-flex justify-content-end align-items-center text-end"
-          >
+            className="d-flex justify-content-end align-items-center text-end">
             <div>
               <p className="mb-0">{amount} ETH</p>
               {transaction.price &&

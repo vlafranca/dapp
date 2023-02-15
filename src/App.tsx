@@ -20,8 +20,13 @@ import ConnectWallet from "./components/ConnectWallet/ConnectWallet";
 import ThemeContext, { DarkTheme, LightTheme } from "./contexts/ThemeContext";
 import Web3Context from "./contexts/Web3Context";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
+import { configureAlchemy } from "./store/thunk";
 import { updateBalance, updateNetwork } from "./store/walletSlice";
-import { EthNetworkNameMapping, EthNetworks } from "./types/web3";
+import {
+  EthNetworkNameMapping,
+  EthNetworks,
+  NetworkAlchemyMapping,
+} from "./types/web3";
 
 const Networks = [EthNetworks.MainNet, EthNetworks.Goerli];
 
@@ -38,6 +43,7 @@ const App: React.FC = () => {
         method: "wallet_switchEthereumChain",
         params: [{ chainId: Web3.utils.toHex(chainId) }],
       });
+      const network: EthNetworks = await web3.eth.getChainId();
       dispatch(
         //TODO put in thunk
         updateBalance(
@@ -46,7 +52,8 @@ const App: React.FC = () => {
           )
         )
       );
-      dispatch(updateNetwork(await web3.eth.getChainId()));
+      dispatch(updateNetwork(network));
+      dispatch(configureAlchemy(NetworkAlchemyMapping[network]));
     } catch (e: any) {
       alert(e.message);
       console.log(e);
@@ -61,8 +68,7 @@ const App: React.FC = () => {
           variant={theme.theme}
           expand="lg"
           className="mb-2"
-          collapseOnSelect
-        >
+          collapseOnSelect>
           <Container>
             <Navbar.Brand href="#home">ZDAPP</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -72,25 +78,24 @@ const App: React.FC = () => {
                   to={{
                     pathname: "/ethereum",
                     search: window.location.search,
-                  }}
-                >
+                  }}>
                   <Nav.Link>Ethereum</Nav.Link>
                 </LinkContainer>
                 <LinkContainer
-                  to={{ pathname: "/tokens", search: window.location.search }}
-                >
+                  to={{
+                    pathname: "/tokens",
+                    search: window.location.search,
+                  }}>
                   <Nav.Link>Tokens</Nav.Link>
                 </LinkContainer>
                 <LinkContainer
-                  to={{ pathname: "/nft", search: window.location.search }}
-                >
+                  to={{ pathname: "/nft", search: window.location.search }}>
                   <Nav.Link>NFT</Nav.Link>
                 </LinkContainer>
                 <Nav.Link
                   onClick={() =>
                     setTheme(theme.theme === "dark" ? LightTheme : DarkTheme)
-                  }
-                >
+                  }>
                   {theme.theme === "dark" ? (
                     <span>
                       Light mode <BrightnessHighFill />
@@ -113,14 +118,12 @@ const App: React.FC = () => {
                       title={EthNetworkNameMapping[wallet.networkId]}
                       defaultValue={EthNetworks.Goerli}
                       onSelect={changeNetwork}
-                      variant={theme.buttons}
-                    >
+                      variant={theme.buttons}>
                       {Networks.map((network, i) => (
                         <Dropdown.Item
                           key={i}
                           active={wallet.networkId === network}
-                          eventKey={network}
-                        >
+                          eventKey={network}>
                           {EthNetworkNameMapping[network]}
                         </Dropdown.Item>
                       ))}
@@ -136,7 +139,10 @@ const App: React.FC = () => {
         </Navbar>
       </header>
       <Outlet />
-      <ToastContainer position="bottom-end" className="position-fixed p-3">
+      <ToastContainer
+        position="bottom-end"
+        containerPosition="fixed"
+        className="p-3">
         {wallet.errors.map((err, i) => (
           <ErrorToast key={i} title={err.type} message={err.message} />
         ))}
@@ -159,8 +165,7 @@ const ErrorToast: FC<{ title: string; message: string }> = ({
       }}
       show={show}
       delay={5000}
-      autohide
-    >
+      autohide>
       <Toast.Header>
         <strong className="me-auto">{title}</strong>
       </Toast.Header>

@@ -19,7 +19,7 @@ const Tokens: FC<TokensProps> = () => {
     if (!wallet.walletAddress || wallet.tokens.hasData) return;
 
     refresh();
-  }, []);
+  }, [wallet.networkId]);
 
   const refresh = () => dispatch(fetchTokens());
 
@@ -77,8 +77,7 @@ const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
           </Col>
           <Col
             xs="auto"
-            className="d-flex justify-content-end align-items-center text-end"
-          >
+            className="d-flex justify-content-end align-items-center text-end">
             <div>
               <p className="mb-0">
                 {tokenBalance}({token.symbol})
