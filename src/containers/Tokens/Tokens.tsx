@@ -1,8 +1,10 @@
 import { Utils } from "alchemy-sdk";
 import { FC, useEffect } from "react";
-import { Button, Card, Col, Image, Row } from "react-bootstrap";
+import { Card, Col, Image, Row } from "react-bootstrap";
 import { ArrowRepeat } from "react-bootstrap-icons";
 import LoadingIndicator from "../../components/Spinner/Spinner";
+import ThemeButton from "../../components/ThemeButton/ThemeButton";
+import ThemeCard from "../../components/ThemeCard/ThemeCard";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchPrice, fetchTokens } from "../../store/thunk";
 import { TokenDetail } from "../../store/walletSlice";
@@ -33,9 +35,9 @@ const Tokens: FC<TokensProps> = () => {
           (${Math.round(Number(wallet.tokens.totalPrice) * 100) / 100})
         </Col>
         <Col md="auto" xs="12" className="d-flex align-items-center ms-auto">
-          <Button className="d-flex align-items-center" onClick={refresh}>
+          <ThemeButton className="d-flex align-items-center" onClick={refresh}>
             <ArrowRepeat />
-          </Button>
+          </ThemeButton>
         </Col>
       </Row>
       {wallet?.tokens.data?.length ? (
@@ -62,7 +64,7 @@ const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
   }, []);
 
   return (
-    <Card className="mb-2 image-left">
+    <ThemeCard className="mb-2 image-left">
       <Card.Body>
         <Row>
           <Col xs={"auto"}>
@@ -75,7 +77,6 @@ const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
           </Col>
           <Col
             xs="auto"
-            sm={3}
             className="d-flex justify-content-end align-items-center text-end"
           >
             <div>
@@ -87,7 +88,7 @@ const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
           </Col>
         </Row>
       </Card.Body>
-    </Card>
+    </ThemeCard>
   );
 };
 

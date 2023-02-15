@@ -1,8 +1,11 @@
-import { FC, useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 import { Badge, Button, Card, Col, Row, Spinner } from "react-bootstrap";
 import { ArrowRepeat } from "react-bootstrap-icons";
 import Web3 from "web3";
 import LoadingIndicator from "../../components/Spinner/Spinner";
+import ThemeButton from "../../components/ThemeButton/ThemeButton";
+import ThemeCard from "../../components/ThemeCard/ThemeCard";
+import ThemeContext from "../../contexts/ThemeContext";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchEthTransactions, fetchHistoricalPrice } from "../../store/thunk";
 import { WalletState } from "../../store/walletSlice";
@@ -36,9 +39,9 @@ const Ethereum: FC<EthereumProps> = () => {
           ({Math.round(Number(wallet.balance) * 1000000) / 1000000} eth)
         </Col>
         <Col md="auto" xs="12" className="d-flex align-items-center ms-auto">
-          <Button className="d-flex align-items-center" onClick={refresh}>
+          <ThemeButton className="d-flex align-items-center" onClick={refresh}>
             <ArrowRepeat />
-          </Button>
+          </ThemeButton>
         </Col>
       </Row>
       {wallet?.ethereum.transactions?.length ? (
@@ -87,6 +90,7 @@ const TransactionCard: FC<{
   const amount = Web3.utils.fromWei(transaction.value);
   const date = new Date(parseInt(transaction.timeStamp) * 1000);
   const dispatch = useAppDispatch();
+  const [theme] = useContext(ThemeContext);
 
   useEffect(() => {
     if (transaction.price !== undefined) return;
@@ -95,7 +99,7 @@ const TransactionCard: FC<{
   }, []);
 
   return (
-    <Card className="mb-2">
+    <ThemeCard className={"mb-2"}>
       <Card.Body>
         <Row>
           <Col className="d-flex flex-column">
@@ -123,7 +127,7 @@ const TransactionCard: FC<{
           </Col>
         </Row>
       </Card.Body>
-    </Card>
+    </ThemeCard>
   );
 };
 

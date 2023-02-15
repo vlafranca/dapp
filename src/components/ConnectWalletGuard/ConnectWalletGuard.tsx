@@ -1,10 +1,11 @@
 import { FC, useEffect, useRef } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Col, Container, Form, Row } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { ErrorBoundary } from "../../errors/ErrorBoundary";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setMetamasInstalled, setWalletAddress } from "../../store/walletSlice";
 import ConnectWallet from "../ConnectWallet/ConnectWallet";
+import ThemeButton from "../ThemeButton/ThemeButton";
 
 interface ConnectWalletGuardProps {
   children: JSX.Element;
@@ -68,9 +69,9 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
               />
             </Col>
             <Col className="mb-2 text-center" xs="12" sm="auto">
-              <Button variant="primary" type="submit" onClick={searchAddress}>
+              <ThemeButton type="submit" onClick={searchAddress}>
                 Search
-              </Button>
+              </ThemeButton>
             </Col>
           </Row>
         </Container>

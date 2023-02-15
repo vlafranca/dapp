@@ -1,7 +1,9 @@
 import detectEthereumProvider from "@metamask/detect-provider";
 import { FC, useContext, useEffect } from "react";
-import { Button, Dropdown, DropdownButton } from "react-bootstrap";
+import { Dropdown, DropdownButton } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
+import ThemeContext from "../../contexts/ThemeContext";
+import Web3Context from "../../contexts/Web3Context";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   reset,
@@ -9,7 +11,7 @@ import {
   setWalletAddress,
   unsetWalletAddress,
 } from "../../store/walletSlice";
-import Web3Context from "../../Web3Context";
+import ThemeButton from "../ThemeButton/ThemeButton";
 
 interface ConnectWalletProps {}
 
@@ -17,7 +19,8 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
   const wallet = useAppSelector((state) => state.wallet);
   const dispatch = useAppDispatch();
   const web3 = useContext(Web3Context);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
+  const [theme] = useContext(ThemeContext);
 
   useEffect(() => {
     const detectMetamask = async () => {
@@ -52,16 +55,18 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
   }
 
   if (!wallet.isMetamaskInstalled) {
-    return <Button onClick={connectWallet}>Install Metamask</Button>;
+    return <ThemeButton onClick={connectWallet}>Install Metamask</ThemeButton>;
   }
 
   return !wallet.walletAddress ? (
-    <Button onClick={connectWallet}>Connect Wallet</Button>
+    <ThemeButton onClick={connectWallet}>Connect Wallet</ThemeButton>
   ) : (
     <DropdownButton
       align="end"
       id="dropdown-basic-button"
-      title={wallet.walletAddress}>
+      title={wallet.walletAddress}
+      variant={theme.buttons}
+    >
       <Dropdown.Item onClick={disconnectWallet}>Disconnect</Dropdown.Item>
     </DropdownButton>
   );

@@ -11,15 +11,17 @@ import {
   Toast,
   ToastContainer,
 } from "react-bootstrap";
+import { BrightnessHighFill, MoonStarsFill } from "react-bootstrap-icons";
 import { LinkContainer } from "react-router-bootstrap";
 import { Outlet } from "react-router-dom";
 import Web3 from "web3";
 import "./App.scss";
 import ConnectWallet from "./components/ConnectWallet/ConnectWallet";
+import ThemeContext, { DarkTheme, LightTheme } from "./contexts/ThemeContext";
+import Web3Context from "./contexts/Web3Context";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { updateBalance, updateNetwork } from "./store/walletSlice";
 import { EthNetworkNameMapping, EthNetworks } from "./types/web3";
-import Web3Context from "./Web3Context";
 
 const Networks = [EthNetworks.MainNet, EthNetworks.Goerli];
 
@@ -27,6 +29,7 @@ const App: React.FC = () => {
   const wallet = useAppSelector((state) => state.wallet);
   const dispatch = useAppDispatch();
   const web3 = useContext(Web3Context);
+  const [theme, setTheme] = useContext(ThemeContext);
 
   async function changeNetwork(chainId: EventKey | null) {
     if (!chainId) return;
@@ -51,9 +54,15 @@ const App: React.FC = () => {
   }
 
   return (
-    <>
-      <header>
-        <Navbar bg="light" expand="lg" className="mb-2" collapseOnSelect>
+    <div id="content" className={"bg-" + theme.secondary}>
+      <header className="dark">
+        <Navbar
+          bg={theme.theme}
+          variant={theme.theme}
+          expand="lg"
+          className="mb-2"
+          collapseOnSelect
+        >
           <Container>
             <Navbar.Brand href="#home">ZDAPP</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -77,8 +86,24 @@ const App: React.FC = () => {
                 >
                   <Nav.Link>NFT</Nav.Link>
                 </LinkContainer>
+                <Nav.Link
+                  onClick={() =>
+                    setTheme(theme.theme === "dark" ? LightTheme : DarkTheme)
+                  }
+                >
+                  {theme.theme === "dark" ? (
+                    <span>
+                      Light mode <BrightnessHighFill />
+                    </span>
+                  ) : (
+                    <span>
+                      Dark mode <MoonStarsFill />
+                    </span>
+                  )}
+                </Nav.Link>
               </Nav>
             </Navbar.Collapse>
+
             <Row direction="horizontal" className="justify-content-end" gap={3}>
               {wallet.walletAddress && (
                 <>
@@ -88,6 +113,7 @@ const App: React.FC = () => {
                       title={EthNetworkNameMapping[wallet.networkId]}
                       defaultValue={EthNetworks.Goerli}
                       onSelect={changeNetwork}
+                      variant={theme.buttons}
                     >
                       {Networks.map((network, i) => (
                         <Dropdown.Item
@@ -115,7 +141,7 @@ const App: React.FC = () => {
           <ErrorToast key={i} title={err.type} message={err.message} />
         ))}
       </ToastContainer>
-    </>
+    </div>
   );
 };
 

@@ -1,7 +1,9 @@
 import { FC, useEffect } from "react";
-import { Button, Card, Col, Row } from "react-bootstrap";
+import { Card, Col, Row } from "react-bootstrap";
 import { ArrowRepeat } from "react-bootstrap-icons";
 import LoadingIndicator from "../../components/Spinner/Spinner";
+import ThemeButton from "../../components/ThemeButton/ThemeButton";
+import ThemeCard from "../../components/ThemeCard/ThemeCard";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchNFTs } from "../../store/thunk";
 
@@ -28,9 +30,9 @@ const NFT: FC<NFTProps> = () => {
           <h1>Your NFTs</h1>
         </Col>
         <Col md="auto" xs="12" className="d-flex align-items-center ms-auto">
-          <Button className="d-flex align-items-center" onClick={refresh}>
+          <ThemeButton className="d-flex align-items-center" onClick={refresh}>
             <ArrowRepeat />
-          </Button>
+          </ThemeButton>
         </Col>
       </Row>
       {!wallet.nfts.data?.length && (
@@ -46,12 +48,12 @@ const NFT: FC<NFTProps> = () => {
               {collection.map((nft) => {
                 return (
                   <Col md={3} className="mb-3" key={nft.tokenId}>
-                    <Card>
+                    <ThemeCard>
                       <Card.Img variant="top" src={nft.media[0]?.gateway} />
                       <Card.Body>
                         <Card.Title>{nft.title}</Card.Title>
                       </Card.Body>
-                    </Card>
+                    </ThemeCard>
                   </Col>
                 );
               })}
