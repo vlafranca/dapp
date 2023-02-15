@@ -1,5 +1,6 @@
 import { FC, useEffect } from "react";
-import { Card, Col, Row } from "react-bootstrap";
+import { Button, Card, Col, Row } from "react-bootstrap";
+import { ArrowRepeat } from "react-bootstrap-icons";
 import Spinner from "../../components/Spinner/Spinner";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchNFTs } from "../../store/thunk";
@@ -13,21 +14,30 @@ const NFT: FC<NFTProps> = () => {
   useEffect(() => {
     if (!wallet.walletAddress || wallet.nfts.hasData) return;
 
-    dispatch(fetchNFTs());
+    refresh();
   }, []);
+
+  const refresh = () => dispatch(fetchNFTs());
 
   if (wallet.nfts.loading) return <Spinner />;
 
-  if (!wallet.nfts.data?.length) {
-    return (
-      <Row className="mt-4">
-        <Col className="text-center">No NFT yet</Col>
-      </Row>
-    );
-  }
-
   return (
     <>
+      <Row>
+        <Col xs="auto">
+          <h1>Your NFTs</h1>
+        </Col>
+        <Col md="auto" xs="12" className="d-flex align-items-center ms-auto">
+          <Button className="d-flex align-items-center" onClick={refresh}>
+            <ArrowRepeat />
+          </Button>
+        </Col>
+      </Row>
+      {!wallet.nfts.data?.length && (
+        <Row className="mt-4">
+          <Col className="text-center">No NFT yet</Col>
+        </Row>
+      )}
       {wallet.nfts.data?.map((collection) => {
         return (
           <>

@@ -7,7 +7,12 @@ import {
 } from "alchemy-sdk";
 import { EtherscanTransaction } from "../types/etherscan";
 import { ExternalApi } from "../types/external";
-import { fetchEthTransactions, fetchTokenInfo, fetchTokens } from "./thunk";
+import {
+  fetchEthTransactions,
+  fetchNFTs,
+  fetchTokenInfo,
+  fetchTokens,
+} from "./thunk";
 
 export interface TokenDetail
   extends TokenMetadataResponse,
@@ -193,6 +198,9 @@ export const walletSlice = createSlice({
     });
     builder.addCase(fetchTokenInfo.pending, (state, action) => {
       state.tokens.loading = true;
+    });
+    builder.addCase(fetchNFTs.pending, (state) => {
+      state.nfts.loading = true;
     });
   },
 });

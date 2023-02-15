@@ -74,14 +74,15 @@ const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
             {token.name} {token.symbol}
           </Col>
           <Col
-            md={3}
-            className="ms-auto d-flex justify-content-center align-items-center text-center"
+            xs="auto"
+            sm={3}
+            className="d-flex justify-content-end align-items-center text-end"
           >
             <div>
               <p className="mb-0">
                 {tokenBalance}({token.symbol})
               </p>
-              {token.price && "$" + token.price * Number(tokenBalance)}
+              {token.price ? "$" + token.price * Number(tokenBalance) : "NA"}
             </div>
           </Col>
         </Row>
