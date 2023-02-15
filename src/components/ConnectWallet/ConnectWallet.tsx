@@ -4,6 +4,7 @@ import { Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
+  reset,
   setMetamasInstalled,
   setWalletAddress,
   unsetWalletAddress,
@@ -46,6 +47,7 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
 
   function disconnectWallet(): void {
     dispatch(unsetWalletAddress());
+    dispatch(reset());
     setSearchParams({});
   }
 
@@ -59,8 +61,7 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
     <DropdownButton
       align="end"
       id="dropdown-basic-button"
-      title={wallet.walletAddress}
-    >
+      title={wallet.walletAddress}>
       <Dropdown.Item onClick={disconnectWallet}>Disconnect</Dropdown.Item>
     </DropdownButton>
   );

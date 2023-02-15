@@ -70,6 +70,9 @@ export const walletSlice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
+    reset: (state) => {
+      state = initialState;
+    },
     setMetamasInstalled: (state) => {
       state.isMetamaskInstalled = true;
     },
@@ -181,6 +184,7 @@ export const walletSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+  reset,
   setMetamasInstalled,
   unsetMetamasInstalled,
   setWalletAddress,
