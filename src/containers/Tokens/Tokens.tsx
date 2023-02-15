@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { Card, Col, Image, Row } from "react-bootstrap";
+import Spinner from "../../components/Spinner/Spinner";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchTokens } from "../../store/thunk";
 import { TokenDetail } from "../../store/walletSlice";
@@ -16,7 +17,7 @@ const Tokens: FC<TokensProps> = () => {
     dispatch(fetchTokens());
   }, []);
 
-  if (wallet.tokens.loading) return <div>Spinner</div>;
+  if (wallet.tokens.loading) return <Spinner />;
 
   return (
     <>
@@ -62,8 +63,7 @@ const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
           </Col>
           <Col
             md={3}
-            className="ms-auto d-flex justify-content-center align-items-center text-center"
-          >
+            className="ms-auto d-flex justify-content-center align-items-center text-center">
             <div>
               <p className="mb-0">
                 {tokenBalance}({token.symbol})

@@ -1,5 +1,6 @@
 import { FC, useEffect } from "react";
 import { Card, Col, Row } from "react-bootstrap";
+import Spinner from "../../components/Spinner/Spinner";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchNFTs } from "../../store/thunk";
 
@@ -15,7 +16,7 @@ const NFT: FC<NFTProps> = () => {
     dispatch(fetchNFTs());
   }, []);
 
-  if (wallet.nfts.loading) return <div>Spinner</div>;
+  if (wallet.nfts.loading) return <Spinner />;
 
   return (
     <>

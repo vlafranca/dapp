@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { Badge, Card, Col, Row } from "react-bootstrap";
 import Web3 from "web3";
+import Spinner from "../../components/Spinner/Spinner";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchEthTransactions } from "../../store/thunk";
 import { WalletState } from "../../store/walletSlice";
@@ -19,7 +20,7 @@ const Ethereum: FC<EthereumProps> = () => {
   }, []);
 
   if (wallet?.ethereum?.loading) {
-    return <div>Spinner</div>;
+    return <Spinner />;
   }
 
   return (
@@ -32,15 +33,16 @@ const Ethereum: FC<EthereumProps> = () => {
           ({Math.round(Number(wallet.balance) * 1000000) / 1000000} eth)
         </Col>
       </Row>
-      {wallet?.ethereum?.transactions?.map((transaction: any, i: number) => {
-        return (
-          <TransactionCard
-            index={i}
-            transaction={transaction}
-            wallet={wallet}
-          />
-        );
-      })}
+      {wallet?.ethereum?.transactions &&
+        wallet.ethereum.transactions.map((transaction: any, i: number) => {
+          return (
+            <TransactionCard
+              index={i}
+              transaction={transaction}
+              wallet={wallet}
+            />
+          );
+        })}
     </>
   );
 };
@@ -83,8 +85,7 @@ const TransactionCard: FC<{
           </Col>
           <Col
             md={3}
-            className="ms-auto d-flex justify-content-end align-items-center text-end"
-          >
+            className="ms-auto d-flex justify-content-end align-items-center text-end">
             <div>
               <p className="mb-0">{amount} ETH</p>
               {price && "$" + (price * Number(amount)).toPrecision(4)}
