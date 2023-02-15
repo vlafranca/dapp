@@ -110,7 +110,7 @@ const App: React.FC = () => {
         </Navbar>
       </header>
       <Outlet />
-      <ToastContainer position="top-end" className="p-3">
+      <ToastContainer position="bottom-end" className="position-fixed p-3">
         {wallet.errors.map((err, i) => (
           <ErrorToast key={i} title={err.type} message={err.message} />
         ))}
@@ -128,7 +128,9 @@ const ErrorToast: FC<{ title: string; message: string }> = ({
   return (
     <Toast
       bg="danger"
-      onClose={() => setShow(false)}
+      onClose={() => {
+        setShow(false);
+      }}
       show={show}
       delay={5000}
       autohide
