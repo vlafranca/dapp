@@ -5,6 +5,7 @@ import {
   TokenBalanceSuccess,
   TokenMetadataResponse,
 } from "alchemy-sdk";
+import Web3 from "web3";
 import { EtherscanTransaction } from "../types/etherscan";
 import { ExternalApi } from "../types/external";
 import { EthNetworks } from "../types/web3";
@@ -190,10 +191,14 @@ export const walletSlice = createSlice({
         (token) => token.contractAddress === action.payload.contractAddress
       );
       if (token) token.price = action.payload.price;
-      state.tokens.totalPrice = state.tokens.data.reduce(
-        (acc, v) => acc + (v.price || 0),
-        0
-      );
+      state.tokens.totalPrice = state.tokens.data.reduce((acc, v) => {
+        let balance = 0;
+        try {
+          // sometimes wei value is invalid so just ignore the error
+          balance = parseFloat(Web3.utils.fromWei(v.tokenBalance));
+        } catch (_) {}
+        return acc + (v.price || 0) * balance;
+      }, 0);
     },
     setEthTransacPrice: (
       state,
