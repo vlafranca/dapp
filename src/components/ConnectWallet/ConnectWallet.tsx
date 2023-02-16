@@ -19,6 +19,10 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
     dispatch(connectWallet());
   }
 
+  function goToMetamaskWebsite(): void {
+    window.location.href = "https://metamask.io/download/";
+  }
+
   function disconnectWallet(): void {
     dispatch(unsetWalletAddress());
     dispatch(reset());
@@ -27,7 +31,7 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
 
   if (!wallet.isMetamaskInstalled) {
     return (
-      <ThemeButton onClick={connect} disabled={wallet.connecting}>
+      <ThemeButton onClick={goToMetamaskWebsite} disabled={wallet.connecting}>
         {wallet.connecting ? (
           <>
             <Spinner
