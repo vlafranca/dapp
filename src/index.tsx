@@ -1,4 +1,3 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import { FC, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux/es/exports";
