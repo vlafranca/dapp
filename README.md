@@ -91,6 +91,7 @@ The application is intended to be used with Metamask wallet. The search form on 
 
 ## TODO improvements
 
+- Handle unsupported networks on network change
 - Display additional info for NFT
 - Connect components to store with `connect()` utility from redux and `mapStateToProps`
 - Better management of configuration depending environment
