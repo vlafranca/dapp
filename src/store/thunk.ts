@@ -194,7 +194,7 @@ export const fetchTokenInfo = createAsyncThunk<
   alchemy.core
     .getTokenMetadata(token.contractAddress)
     .then((resp) => {
-      thunkApi.dispatch(setToken({ ...resp, ...token, price: 0 }));
+      thunkApi.dispatch(setToken({ ...resp, ...token }));
     })
     .catch((err: { status: number; body: string; code: string }) => {
       thunkApi.dispatch(
