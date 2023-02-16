@@ -6,6 +6,7 @@ import {
   Network,
   TokenBalanceSuccess,
 } from "alchemy-sdk";
+import axios, { AxiosError } from "axios";
 import Web3 from "web3";
 import { CoinGeckoHistoricalResponse } from "../types/coingecko";
 import {
@@ -33,6 +34,10 @@ import {
   TransactionDetail,
   updateBalance,
 } from "./walletSlice";
+
+const isLocal =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
 
 const web3 = new Web3(Web3.givenProvider);
 
@@ -234,10 +239,14 @@ export const fetchPrice = createAsyncThunk<
     state: RootState;
   }
 >("fetchPrice", async (token, thunkApi) => {
-  fetch(
-    `https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${token.contractAddress}&vs_currencies=USD`
-  )
-    .then((resp) => resp.json())
+  axios
+    .get(
+      (isLocal // should be configured in environment used in build steps
+        ? "/coingecko"
+        : "https://api.coingecko.com/api/v3") +
+        `/simple/token_price/ethereum?contract_addresses=${token.contractAddress}&vs_currencies=USD`
+    )
+    .then((resp) => resp.data)
     .then(
       (price: {
         [key: string]: {
@@ -252,11 +261,11 @@ export const fetchPrice = createAsyncThunk<
           })
         )
     )
-    .catch((err) =>
+    .catch((err: AxiosError) =>
       thunkApi.dispatch(
         setError({
           type: ExternalApi.CoinGecko,
-          message: JSON.stringify(err),
+          message: err.message,
         })
       )
     );
@@ -273,12 +282,16 @@ export const fetchHistoricalPrice = createAsyncThunk<
 >("fetchHistoricalPrice", async (transaction, thunkApi) => {
   const date = new Date(parseInt(transaction.timeStamp) * 1000);
 
-  fetch(
-    `https://api.coingecko.com/api/v3/coins/ethereum/history?date=${date.getDate()}-${
-      date.getUTCMonth() + 1
-    }-${date.getFullYear()}&localization=false`
-  )
-    .then((resp) => resp.json())
+  axios
+    .get(
+      (isLocal // should be configured in environment used in build steps
+        ? "/coingecko"
+        : "https://api.coingecko.com/api/v3") +
+        `/coins/ethereum/history?date=${date.getDate()}-${
+          date.getUTCMonth() + 1
+        }-${date.getFullYear()}&localization=false`
+    )
+    .then((resp) => resp.data)
     .then((data: CoinGeckoHistoricalResponse) =>
       thunkApi.dispatch(
         setEthTransacPrice({
@@ -287,11 +300,11 @@ export const fetchHistoricalPrice = createAsyncThunk<
         })
       )
     )
-    .catch((err) =>
+    .catch((err: AxiosError) =>
       thunkApi.dispatch(
         setError({
           type: ExternalApi.CoinGecko,
-          message: JSON.stringify(err),
+          message: err.message,
         })
       )
     );

@@ -13,6 +13,7 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.10",
     "alchemy-sdk": "^2.4.3",
+    "axios": "^0.26.1",
     "bootstrap": "^5.2.3",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.1",
@@ -30,6 +31,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:proxy": "node proxy/server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -55,6 +57,7 @@
   "devDependencies": {
     "@types/react-router-bootstrap": "^0.24.5",
     "@types/react-router-dom": "^5.3.3",
-    "@types/web3": "^1.2.2"
+    "@types/web3": "^1.2.2",
+    "http-proxy-middleware": "^2.0.6"
   }
 }
