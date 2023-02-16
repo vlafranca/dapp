@@ -88,3 +88,10 @@ The application is intended to be used with Metamask wallet. The search form on 
 ## Local Proxy
 
 `src/setupProxy.js` was setup to avoid getting CORS errors on coingecko apis requests and retrieve the error message correctly. A basic condition has been put in place in thunk but this should be globally configured for future developments/deployments to manage api urls correctly.
+
+## TODO improvements
+
+- Connect components to store with `connect()` utility from redux and `mapStateToProps`
+- Better management of configuration depending environment
+- Better management of api urls
+- split thunk into dedicated feature
