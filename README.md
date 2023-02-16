@@ -20,6 +20,20 @@ This project is an exercise about creating an erc-20 decentralized defi applicat
 
 Application accessible on : `http://localhost:5000`
 
+## App structure
+
+- src
+  - components : shared components directory
+  - containers : represent the pages (entry points) of the application
+  - contexts : React context providers directory
+    - ThemeContext.ts : Dark/Light mode global management
+  - store : Redux implementation
+    - hooks.ts : Redux application hooks utilities
+    - store.ts : Redux store initialization
+    - thunk.ts : implements async requests and processings and initialization of sdks
+    - walletSlice.ts : define the reducer for our application
+  - types : types definition directory
+
 ## Features
 
 ### Summary
@@ -55,7 +69,7 @@ The application is intended to be used with Metamask wallet. The search form on 
 
 #### Tokens
 
-![Tokens page](doc/.jpg "Title")
+![Tokens page](doc/tokens.jpg "Title")
 
 #### NFTs
 
