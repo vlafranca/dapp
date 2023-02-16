@@ -52,7 +52,6 @@ const NFT: FC<NFTProps> = () => {
                       <Card.Img
                         variant="top"
                         onError={({ currentTarget }) => {
-                          console.log("error");
                           currentTarget.onerror = null; // prevents looping
                           currentTarget.src = "no_image.png";
                         }}
