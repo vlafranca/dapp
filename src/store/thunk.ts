@@ -10,10 +10,7 @@ import axios, { AxiosError } from "axios";
 import * as uuid from "uuid";
 import Web3 from "web3";
 import { CoinGeckoHistoricalResponse } from "../types/coingecko";
-import {
-  EtherscanTransaction,
-  EtherscanTxListResponse,
-} from "../types/etherscan";
+import { EtherscanResponse, EtherscanTransaction } from "../types/etherscan";
 import { ExternalApi } from "../types/external";
 import { EthNetworks, NetworkAlchemyMapping } from "../types/web3";
 import { AppDispatch, RootState } from "./store";
@@ -115,6 +112,41 @@ export const connectWallet = createAsyncThunk<
   }
 });
 
+export const fetchEthBalance = createAsyncThunk<
+  void,
+  undefined,
+  {
+    // Optional fields for defining thunkApi field types
+    dispatch: AppDispatch;
+    state: RootState;
+  }
+>("fetchEthBalance", async (_, thunkApi) => {
+  fetch(
+    `${
+      EtherscanEndpoints[thunkApi.getState().wallet.networkId]
+    }/api?module=account&action=balance&address=${
+      thunkApi.getState().wallet.walletAddress
+    }&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`
+  )
+    .then((data) => data.json())
+    .then((data: EtherscanResponse) => {
+      if (data.status === "0" && typeof data.result === "string") {
+        thunkApi.dispatch(
+          setError({
+            type: ExternalApi.Etherscan,
+            message: data.result as string,
+            id: uuid.v4(),
+          })
+        );
+        return;
+      }
+      thunkApi.dispatch(
+        updateBalance(Web3.utils.fromWei(data.result as string))
+      );
+    })
+    .catch((err) => thunkApi.dispatch(setError({ ...err, id: uuid.v4() })));
+});
+
 export const fetchEthTransactions = createAsyncThunk<
   void,
   number,
@@ -134,7 +166,7 @@ export const fetchEthTransactions = createAsyncThunk<
     }`
   )
     .then((data) => data.json())
-    .then((data: EtherscanTxListResponse) => {
+    .then((data: EtherscanResponse) => {
       if (data.status === "0" && typeof data.result === "string") {
         thunkApi.dispatch(
           setError({

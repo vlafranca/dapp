@@ -21,7 +21,7 @@ export interface EtherscanTransaction {
   functionName: string;
 }
 
-export interface EtherscanTxListResponse {
+export interface EtherscanResponse {
   status: "0" | "1";
   message: string;
   result: EtherscanTransaction[] | string;

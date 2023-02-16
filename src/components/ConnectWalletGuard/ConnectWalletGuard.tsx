@@ -3,6 +3,7 @@ import { Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { ErrorBoundary } from "../../errors/ErrorBoundary";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { fetchEthBalance } from "../../store/thunk";
 import { setMetamasInstalled, setWalletAddress } from "../../store/walletSlice";
 import { EthNetworks } from "../../types/web3";
 import ConnectWallet from "../ConnectWallet/ConnectWallet";
@@ -31,6 +32,7 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
           networkId: EthNetworks.MainNet,
         })
       );
+      dispatch(fetchEthBalance());
     }
   }, []);
 
@@ -48,6 +50,7 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
     setSearchParams({
       wallet: inputValue,
     });
+    dispatch(fetchEthBalance());
   };
 
   // TODO improve css for this
@@ -73,7 +76,8 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
               <ThemeButton
                 type="submit"
                 disabled={wallet.connecting}
-                onClick={searchAddress}>
+                onClick={searchAddress}
+              >
                 {wallet.connecting ? (
                   <>
                     <Spinner

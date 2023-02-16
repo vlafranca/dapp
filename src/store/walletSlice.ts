@@ -208,7 +208,11 @@ export const walletSlice = createSlice({
     },
     setError: (
       state,
-      action: PayloadAction<{ message: string; type: ExternalApi; id: string }>
+      action: PayloadAction<{
+        message: string;
+        type: ExternalApi | string;
+        id: string;
+      }>
     ) => {
       state.errors.push(action.payload);
     },

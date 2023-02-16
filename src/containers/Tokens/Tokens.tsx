@@ -1,13 +1,14 @@
 import { Utils } from "alchemy-sdk";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { Card, Col, Image, Row } from "react-bootstrap";
 import { ArrowRepeat } from "react-bootstrap-icons";
+import * as uuid from "uuid";
 import LoadingIndicator from "../../components/Spinner/Spinner";
 import ThemeButton from "../../components/ThemeButton/ThemeButton";
 import ThemeCard from "../../components/ThemeCard/ThemeCard";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchPrice, fetchTokens } from "../../store/thunk";
-import { TokenDetail } from "../../store/walletSlice";
+import { setError, TokenDetail } from "../../store/walletSlice";
 
 interface TokensProps {}
 
@@ -55,12 +56,23 @@ const Tokens: FC<TokensProps> = () => {
 
 const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
   const dispatch = useAppDispatch();
-  const tokenBalance = Utils.formatEther(token.tokenBalance as string);
+  const [balance, setBalance] = useState<string>("0");
 
   useEffect(() => {
     if (token.price !== undefined) return;
 
     dispatch(fetchPrice(token));
+    try {
+      setBalance(Utils.formatEther(token.tokenBalance as string));
+    } catch (e: any) {
+      dispatch(
+        setError({
+          message: e.message,
+          type: "NumberConversion",
+          id: uuid.v4(),
+        })
+      );
+    }
   }, []);
 
   return (
@@ -77,12 +89,13 @@ const TokenDetailCard: FC<{ token: TokenDetail }> = ({ token }) => {
           </Col>
           <Col
             xs="auto"
-            className="d-flex justify-content-end align-items-center text-end">
+            className="d-flex justify-content-end align-items-center text-end"
+          >
             <div>
               <p className="mb-0">
-                {tokenBalance}({token.symbol})
+                {balance}({token.symbol})
               </p>
-              {token.price ? "$" + token.price * Number(tokenBalance) : "NA"}
+              {token.price ? "$" + token.price * Number(balance) : "NA"}
             </div>
           </Col>
         </Row>
