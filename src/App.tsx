@@ -1,5 +1,5 @@
 import { EventKey } from "@restart/ui/types";
-import React, { FC, useContext, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import {
   Col,
   Container,
@@ -18,42 +18,30 @@ import Web3 from "web3";
 import "./App.scss";
 import ConnectWallet from "./components/ConnectWallet/ConnectWallet";
 import ThemeContext, { DarkTheme, LightTheme } from "./contexts/ThemeContext";
-import Web3Context from "./contexts/Web3Context";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
-import { configureAlchemy } from "./store/thunk";
-import { updateBalance, updateNetwork } from "./store/walletSlice";
-import {
-  EthNetworkNameMapping,
-  EthNetworks,
-  NetworkAlchemyMapping,
-} from "./types/web3";
+import { initWalletConnection } from "./store/thunk";
+import { EthNetworkNameMapping, EthNetworks } from "./types/web3";
 
 const Networks = [EthNetworks.MainNet, EthNetworks.Goerli];
 
 const App: React.FC = () => {
   const wallet = useAppSelector((state) => state.wallet);
   const dispatch = useAppDispatch();
-  const web3 = useContext(Web3Context);
   const [theme, setTheme] = useContext(ThemeContext);
+
+  useEffect(() => {
+    if (wallet.init) return;
+
+    dispatch(initWalletConnection());
+  }, []);
 
   async function changeNetwork(chainId: EventKey | null) {
     if (!chainId) return;
     try {
-      const tx = await (window as any).ethereum.request({
+      await (window as any).ethereum.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: Web3.utils.toHex(chainId) }],
       });
-      const network: EthNetworks = await web3.eth.getChainId();
-      dispatch(
-        //TODO put in thunk
-        updateBalance(
-          web3.utils.fromWei(
-            await web3.eth.getBalance(wallet.walletAddress as string)
-          )
-        )
-      );
-      dispatch(updateNetwork(network));
-      dispatch(configureAlchemy(NetworkAlchemyMapping[network]));
     } catch (e: any) {
       alert(e.message);
       console.log(e);

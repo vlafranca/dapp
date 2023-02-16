@@ -1,3 +1,4 @@
+import detectEthereumProvider from "@metamask/detect-provider";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   Alchemy,
@@ -5,26 +6,35 @@ import {
   Network,
   TokenBalanceSuccess,
 } from "alchemy-sdk";
+import Web3 from "web3";
 import { CoinGeckoHistoricalResponse } from "../types/coingecko";
 import {
   EtherscanTransaction,
   EtherscanTxListResponse,
 } from "../types/etherscan";
 import { ExternalApi } from "../types/external";
-import { EthNetworks } from "../types/web3";
+import { EthNetworks, NetworkAlchemyMapping } from "../types/web3";
 import { AppDispatch, RootState } from "./store";
 import {
+  init,
   pushTransactions,
+  reset,
   resetItems,
   setError,
   setEthTransacPrice,
+  setMetamasInstalled,
+  setNetwork,
   setNFTs,
   setToken,
   setTokenPrice,
   setTransactions,
+  setWalletAddress,
   TokenDetail,
   TransactionDetail,
+  updateBalance,
 } from "./walletSlice";
+
+const web3 = new Web3(Web3.givenProvider);
 
 const config: AlchemySettings = {
   apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
@@ -37,12 +47,62 @@ export const EtherscanEndpoints: { [key: number]: string } = {
   [EthNetworks.Goerli]: "http://api-goerli.etherscan.io",
 };
 
+/**
+ *  Sync thunks
+ */
 export const configureAlchemy =
   (network: Network) => (dispatch: AppDispatch) => {
     alchemy = new Alchemy({ ...config, network });
     dispatch(resetItems());
   };
 
+export const initWalletConnection =
+  () => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const provider = await detectEthereumProvider();
+    provider?.isMetaMask && dispatch(setMetamasInstalled());
+
+    provider?.on("networkChanged", async (networkId: number) => {
+      dispatch(setNetwork(networkId));
+      dispatch(resetItems());
+      dispatch(
+        updateBalance(
+          web3.utils.fromWei(
+            await web3.eth.getBalance(getState().wallet.walletAddress as string)
+          )
+        )
+      );
+      dispatch(configureAlchemy(NetworkAlchemyMapping[networkId]));
+    });
+    provider?.on("accountsChanged", async (accounts: string[]) => {
+      dispatch(reset());
+      dispatch(initUser(accounts[0]));
+    });
+    dispatch(init);
+  };
+
+export const connectWallet = () => async (dispatch: AppDispatch) => {
+  web3.eth
+    .requestAccounts()
+    .then(async (accounts: string[]) => {
+      dispatch(initUser(accounts[0]));
+    })
+    .catch((error: any) => {
+      alert(`Something went wrong: ${error}`);
+    });
+};
+
+export const initUser =
+  (walletAddress: string) => async (dispatch: AppDispatch) => {
+    const balance = web3.utils.fromWei(
+      await web3.eth.getBalance(walletAddress)
+    );
+    const networkId = await web3.eth.net.getId();
+    dispatch(setWalletAddress({ address: walletAddress, balance, networkId }));
+  };
+
+/**
+ * Async thunks
+ */
 export const fetchEthTransactions = createAsyncThunk<
   void,
   number,

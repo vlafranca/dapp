@@ -31,6 +31,7 @@ export interface WalletState {
   walletAddress: string | null;
   balance: string;
   networkId: EthNetworks;
+  init: boolean;
   ethereum: {
     loading: boolean;
     loadingMore: boolean;
@@ -58,6 +59,7 @@ const initialState: WalletState = {
   walletAddress: null,
   balance: "0",
   networkId: EthNetworks.MainNet,
+  init: false,
   ethereum: {
     loading: false,
     loadingMore: false,
@@ -80,9 +82,11 @@ export const walletSlice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
+    init: (state) => {
+      state.init = true;
+    },
     reset: (state) => initialState,
     resetItems: (state) => {
-      console.log(initialState);
       state = {
         ...state,
         ethereum: initialState.ethereum,
@@ -116,9 +120,6 @@ export const walletSlice = createSlice({
     },
     unsetWalletAddress: (state) => {
       state.walletAddress = null;
-    },
-    updateNetwork: (state, action: PayloadAction<EthNetworks>) => {
-      state.networkId = action.payload;
     },
     updateBalance: (state, action: PayloadAction<string>) => {
       state.balance = action.payload;
@@ -227,12 +228,12 @@ export const walletSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+  init,
   reset,
   setMetamasInstalled,
   unsetMetamasInstalled,
   setWalletAddress,
   unsetWalletAddress,
-  updateNetwork,
   updateBalance,
   setTransactions,
   pushTransactions,
