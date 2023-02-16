@@ -1,5 +1,5 @@
 import { FC, useContext } from "react";
-import { Dropdown, DropdownButton } from "react-bootstrap";
+import { Dropdown, DropdownButton, Spinner } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import ThemeContext from "../../contexts/ThemeContext";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -26,11 +26,43 @@ const ConnectWallet: FC<ConnectWalletProps> = () => {
   }
 
   if (!wallet.isMetamaskInstalled) {
-    return <ThemeButton onClick={connect}>Install Metamask</ThemeButton>;
+    return (
+      <ThemeButton onClick={connect} disabled={wallet.connecting}>
+        {wallet.connecting ? (
+          <>
+            <Spinner
+              as="span"
+              animation="grow"
+              size="sm"
+              role="status"
+              aria-hidden="true"
+            />
+            Loading...
+          </>
+        ) : (
+          <>Install Metamask</>
+        )}
+      </ThemeButton>
+    );
   }
 
   return !wallet.walletAddress ? (
-    <ThemeButton onClick={connect}>Connect Wallet</ThemeButton>
+    <ThemeButton onClick={connect} disabled={wallet.connecting}>
+      {wallet.connecting ? (
+        <>
+          <Spinner
+            as="span"
+            animation="grow"
+            size="sm"
+            role="status"
+            aria-hidden="true"
+          />
+          Loading...
+        </>
+      ) : (
+        <>Connect Wallet</>
+      )}
+    </ThemeButton>
   ) : (
     <DropdownButton
       align="end"

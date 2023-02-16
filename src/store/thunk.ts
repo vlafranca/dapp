@@ -80,17 +80,6 @@ export const initWalletConnection =
     dispatch(init);
   };
 
-export const connectWallet = () => async (dispatch: AppDispatch) => {
-  web3.eth
-    .requestAccounts()
-    .then(async (accounts: string[]) => {
-      dispatch(initUser(accounts[0]));
-    })
-    .catch((error: any) => {
-      alert(`Something went wrong: ${error}`);
-    });
-};
-
 export const initUser =
   (walletAddress: string) => async (dispatch: AppDispatch) => {
     const balance = web3.utils.fromWei(
@@ -103,6 +92,23 @@ export const initUser =
 /**
  * Async thunks
  */
+export const connectWallet = createAsyncThunk<
+  void,
+  undefined,
+  {
+    // Optional fields for defining thunkApi field types
+    dispatch: AppDispatch;
+    state: RootState;
+  }
+>("connectWallet", async (_, thunkApi) => {
+  try {
+    const accounts = await web3.eth.requestAccounts();
+    thunkApi.dispatch(initUser(accounts[0]));
+  } catch (error: any) {
+    alert(`Something went wrong: ${error}`);
+  }
+});
+
 export const fetchEthTransactions = createAsyncThunk<
   void,
   number,

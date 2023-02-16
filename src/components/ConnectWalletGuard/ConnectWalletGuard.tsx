@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef } from "react";
-import { Col, Container, Form, Row } from "react-bootstrap";
+import { Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { ErrorBoundary } from "../../errors/ErrorBoundary";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -70,8 +70,24 @@ const ConnectWalletGuard: FC<ConnectWalletGuardProps> = ({ children }) => {
               />
             </Col>
             <Col className="mb-2 text-center" xs="12" sm="auto">
-              <ThemeButton type="submit" onClick={searchAddress}>
-                Search
+              <ThemeButton
+                type="submit"
+                disabled={wallet.connecting}
+                onClick={searchAddress}>
+                {wallet.connecting ? (
+                  <>
+                    <Spinner
+                      as="span"
+                      animation="grow"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />
+                    Loading...
+                  </>
+                ) : (
+                  <>Search</>
+                )}
               </ThemeButton>
             </Col>
           </Row>

@@ -9,6 +9,7 @@ import { EtherscanTransaction } from "../types/etherscan";
 import { ExternalApi } from "../types/external";
 import { EthNetworks } from "../types/web3";
 import {
+  connectWallet,
   fetchEthTransactions,
   fetchNFTs,
   fetchTokenInfo,
@@ -32,6 +33,7 @@ export interface WalletState {
   balance: string;
   networkId: EthNetworks;
   init: boolean;
+  connecting: boolean;
   ethereum: {
     loading: boolean;
     loadingMore: boolean;
@@ -60,6 +62,7 @@ const initialState: WalletState = {
   balance: "0",
   networkId: EthNetworks.MainNet,
   init: false,
+  connecting: false,
   ethereum: {
     loading: false,
     loadingMore: false,
@@ -85,7 +88,11 @@ export const walletSlice = createSlice({
     init: (state) => {
       state.init = true;
     },
-    reset: (state) => initialState,
+    reset: (state) => ({
+      ...initialState,
+      init: state.init,
+      isMetamaskInstalled: state.isMetamaskInstalled,
+    }),
     resetItems: (state) => {
       state = {
         ...state,
@@ -117,6 +124,7 @@ export const walletSlice = createSlice({
       state.walletAddress = action.payload.address;
       state.balance = action.payload.balance;
       state.networkId = action.payload.networkId;
+      state.connecting = false;
     },
     unsetWalletAddress: (state) => {
       state.walletAddress = null;
@@ -222,6 +230,9 @@ export const walletSlice = createSlice({
     });
     builder.addCase(fetchNFTs.pending, (state) => {
       state.nfts.loading = true;
+    });
+    builder.addCase(connectWallet.pending, (state) => {
+      state.connecting = true;
     });
   },
 });
