@@ -7,6 +7,7 @@ import {
   TokenBalanceSuccess,
 } from "alchemy-sdk";
 import axios, { AxiosError } from "axios";
+import * as uuid from "uuid";
 import Web3 from "web3";
 import { CoinGeckoHistoricalResponse } from "../types/coingecko";
 import {
@@ -139,6 +140,7 @@ export const fetchEthTransactions = createAsyncThunk<
           setError({
             type: ExternalApi.Etherscan,
             message: data.result as string,
+            id: uuid.v4(),
           })
         );
         return;
@@ -153,7 +155,7 @@ export const fetchEthTransactions = createAsyncThunk<
         );
       }
     })
-    .catch((err) => thunkApi.dispatch(setError(err)));
+    .catch((err) => thunkApi.dispatch(setError({ ...err, id: uuid.v4() })));
 });
 
 export const fetchTokens = createAsyncThunk<
@@ -177,6 +179,7 @@ export const fetchTokens = createAsyncThunk<
         setError({
           type: ExternalApi.AlchemySdk,
           message: JSON.parse(err.body).error.message,
+          id: uuid.v4(),
         })
       );
     });
@@ -201,6 +204,7 @@ export const fetchTokenInfo = createAsyncThunk<
         setError({
           type: ExternalApi.AlchemySdk,
           message: JSON.parse(err.body).error.message,
+          id: uuid.v4(),
         })
       );
     });
@@ -225,6 +229,7 @@ export const fetchNFTs = createAsyncThunk<
         setError({
           type: ExternalApi.AlchemySdk,
           message: JSON.parse(err.body).error.message,
+          id: uuid.v4(),
         })
       )
     );
@@ -266,6 +271,7 @@ export const fetchPrice = createAsyncThunk<
         setError({
           type: ExternalApi.CoinGecko,
           message: err.message,
+          id: uuid.v4(),
         })
       )
     );
@@ -305,6 +311,7 @@ export const fetchHistoricalPrice = createAsyncThunk<
         setError({
           type: ExternalApi.CoinGecko,
           message: err.message,
+          id: uuid.v4(),
         })
       )
     );

@@ -20,6 +20,7 @@ import ConnectWallet from "./components/ConnectWallet/ConnectWallet";
 import ThemeContext, { DarkTheme, LightTheme } from "./contexts/ThemeContext";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { initWalletConnection } from "./store/thunk";
+import { rmError } from "./store/walletSlice";
 import { EthNetworkNameMapping, EthNetworks } from "./types/web3";
 
 const Networks = [EthNetworks.MainNet, EthNetworks.Goerli];
@@ -132,23 +133,31 @@ const App: React.FC = () => {
         containerPosition="fixed"
         className="p-3">
         {wallet.errors.map((err, i) => (
-          <ErrorToast key={i} title={err.type} message={err.message} />
+          <ErrorToast
+            key={err.id}
+            title={err.type}
+            message={err.message}
+            id={err.id}
+          />
         ))}
       </ToastContainer>
     </div>
   );
 };
 
-const ErrorToast: FC<{ title: string; message: string }> = ({
+const ErrorToast: FC<{ title: string; message: string; id: string }> = ({
   title,
   message,
+  id,
 }) => {
   const [show, setShow] = useState(true);
+  const dispatch = useAppDispatch();
 
   return (
     <Toast
       bg="danger"
       onClose={() => {
+        dispatch(rmError(id));
         setShow(false);
       }}
       show={show}

@@ -52,7 +52,7 @@ export interface WalletState {
     hasData: boolean;
     data?: OwnedNft[][];
   };
-  errors: { type: string; message: string }[];
+  errors: { type: string; message: string; id: string }[];
 }
 
 // Define the initial state using that type
@@ -208,9 +208,16 @@ export const walletSlice = createSlice({
     },
     setError: (
       state,
-      action: PayloadAction<{ message: string; type: ExternalApi }>
+      action: PayloadAction<{ message: string; type: ExternalApi; id: string }>
     ) => {
       state.errors.push(action.payload);
+    },
+    rmError: (state, action: PayloadAction<string>) => {
+      state.errors.splice(
+        state.errors.findIndex((err) => err.id === action.payload),
+        1
+      );
+      return state;
     },
   },
   extraReducers(builder) {
@@ -255,6 +262,7 @@ export const {
   setError,
   resetItems,
   setNetwork,
+  rmError,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;
