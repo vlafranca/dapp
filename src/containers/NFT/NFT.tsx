@@ -42,14 +42,22 @@ const NFT: FC<NFTProps> = () => {
       )}
       {wallet.nfts.data?.map((collection) => {
         return (
-          <>
+          <section key={collection[0].contract.address}>
             <h3>{collection[0].contract.name}</h3>
             <Row className="mb-3">
               {collection.map((nft) => {
                 return (
                   <Col md={3} className="mb-3" key={nft.tokenId}>
                     <ThemeCard>
-                      <Card.Img variant="top" src={nft.media[0]?.gateway} />
+                      <Card.Img
+                        variant="top"
+                        onError={({ currentTarget }) => {
+                          console.log("error");
+                          currentTarget.onerror = null; // prevents looping
+                          currentTarget.src = "no_image.png";
+                        }}
+                        src={nft.media[0]?.gateway || "no_image.png"}
+                      />
                       <Card.Body>
                         <Card.Title>{nft.title}</Card.Title>
                       </Card.Body>
@@ -58,7 +66,7 @@ const NFT: FC<NFTProps> = () => {
                 );
               })}
             </Row>
-          </>
+          </section>
         );
       })}
     </>
